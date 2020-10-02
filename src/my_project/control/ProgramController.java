@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 public class ProgramController {
 
     //Attribute
+    private double elapsedTime = 0;
 
     // Referenzen
     private ViewController viewController;  // diese Referenz soll auf ein Objekt der Klasse viewController zeigen. Über dieses Objekt wird das Fenster gesteuert.
@@ -33,8 +34,9 @@ public class ProgramController {
     public void startProgram() {
         BackgroundGIF b = new BackgroundGIF("assets/images/background1.gif");
         viewController.draw(b);
-        viewController.getSoundController().loadSound("assets/sounds/sc5_field_of_honor.mp3","title",true);
+        viewController.getSoundController().loadSound("assets/sounds/ac4_main_theme.mp3","title",true);
         viewController.getSoundController().playSound("title");
+        new NetworkController().scanForServerIP(1234);
     }
 
     /**

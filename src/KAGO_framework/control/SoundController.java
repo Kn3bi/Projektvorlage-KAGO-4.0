@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class SoundController {
 
-    private double soundDelay = 3;
+    private double soundDelay = 1;
 
     /**
      * Kapselt die nötigen Daten für Sounds, die noch geladen werden
@@ -150,6 +150,7 @@ public class SoundController {
 
     /**
      * Spielt einen Sound (ggf. wiederholt) ab. Wenn der Sound bereits läuft, wird er zuvor gestoppt.
+     * WICHTIGER HINWEIS: eine mp3-Datei kann evtl. nicht wiedergegeben werden, wenn spezielle Album-Art oder ähnliches integriert ist - bei Problemen erst andere mp3s testen
      * @param name Der beim Anlegen des Sounds vergebene, eindeutige Name.
      */
     public void playSound(String name){

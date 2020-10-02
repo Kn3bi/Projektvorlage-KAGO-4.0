@@ -256,7 +256,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
         // Zeichne alle Objekte der aktuellen Szene
         scenes.get(currentScene).drawingPanel.repaint();
         // Aktualisiere SoundController, wenn vorhanden
-        if(soundController != null) soundController.update(dt);
+        if(soundController != null) soundController.update((double)dt/1000);
     }
 
     /**
