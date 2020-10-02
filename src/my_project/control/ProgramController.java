@@ -16,6 +16,7 @@ public class ProgramController {
 
     // Referenzen
     private ViewController viewController;  // diese Referenz soll auf ein Objekt der Klasse viewController zeigen. Über dieses Objekt wird das Fenster gesteuert.
+    private NetworkController networkController;
 
     /**
      * Konstruktor
@@ -36,7 +37,8 @@ public class ProgramController {
         viewController.draw(b);
         viewController.getSoundController().loadSound("assets/sounds/ac4_main_theme.mp3","title",true);
         viewController.getSoundController().playSound("title");
-        new NetworkController().scanForServerIP(1234);
+        networkController = new NetworkController();
+        networkController.startNetworkScan(1234);
     }
 
     /**

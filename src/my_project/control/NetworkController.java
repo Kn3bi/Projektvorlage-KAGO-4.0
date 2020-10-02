@@ -10,7 +10,7 @@ public class NetworkController {
     private boolean isWorking;
     private int maximumCycles;
     private int currentCycle;
-    
+
     public NetworkController(){
         serverIP = null;
         isWorking = false;
@@ -62,7 +62,7 @@ public class NetworkController {
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                System.out.println("No success.");
+                //System.out.println("No success.");
             }
         }
         return null;
@@ -85,4 +85,7 @@ public class NetworkController {
         return null;
     }
 
+    public String getServerIP() {
+        return serverIP;
+    }
 }
