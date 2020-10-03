@@ -2,6 +2,7 @@ package KAGO_framework.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Line2D;
@@ -26,6 +27,21 @@ public class DrawTool {
      */
     public void drawImage(BufferedImage bI, double x, double y){
         if (graphics2D!= null) graphics2D.drawImage(bI, (int)x, (int)y, null);
+    }
+
+    /**
+     * Zeichnet ein Objekt der Klasse BufferedImage
+     * @param bI Das zu zeichnende Objekt
+     * @param x Die x-Koordinate der oberen linken Ecke
+     * @param y Die y-Koordinate der oberen linken Ecke
+     */
+    public void drawRotatedImage(BufferedImage bI, double x, double y, double degrees){
+        if (graphics2D!= null){
+            AffineTransform transform = new AffineTransform();
+            transform.translate(x,y);
+            transform.rotate( Math.toRadians(degrees), bI.getWidth()/2, bI.getHeight()/2 );
+            graphics2D.drawImage(bI, transform, null);
+        }
     }
 
     /**

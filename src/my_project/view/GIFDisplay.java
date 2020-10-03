@@ -6,17 +6,17 @@ import KAGO_framework.view.DrawTool;
 
 import javax.swing.*;
 
-public class BackgroundGIF extends GraphicalObject {
+public class GIFDisplay extends GraphicalObject {
 
     private List<ImageIcon> images;
     private int amount;
 
-    public BackgroundGIF(String imagePath){
+    public GIFDisplay(String imagePath, double x, double y){
         images = new List<>();
         addImage(imagePath);
         images.toFirst();
-        this.x = 0;
-        this.y = 0;
+        this.x = x;
+        this.y = y;
     }
 
     public void addImage(String imagePath){

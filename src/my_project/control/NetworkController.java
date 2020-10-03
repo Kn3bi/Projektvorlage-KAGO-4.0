@@ -14,12 +14,13 @@ public class NetworkController {
     public NetworkController(){
         serverIP = null;
         isWorking = false;
-        maximumCycles = 100;
+        maximumCycles = 5;
     }
 
     /**
      * Initiiert einen Netzwerkscan auf dem entsprechenden Port. Falls ein Server entdeckt wird,
-     * wird die IP im String serverIP gesetzt.
+     * wird die IP im String serverIP gesetzt. Solange gescannt wird, ist diese null, wenn es
+     * kein Ergebnis gibt, ist sie gleich timeout
      * @param port Der zu prüfende Port
      */
     public void startNetworkScan(int port){
@@ -33,6 +34,7 @@ public class NetworkController {
                         currentCycle++;
                         serverIP = scanForServerIP(port);
                     }
+                    serverIP = "timeout";
                     isWorking = false;
                     return null;
                 }
@@ -49,13 +51,24 @@ public class NetworkController {
      * @return die IP Adresse des gefundenen Servers
      */
     private String scanForServerIP(int port) {
+        boolean localhostChecked = false;
         String iIPv4 = getNetworkPartOfIP();
         for (int i = 1; i < 254; i++) {
             try {
-                //System.out.println("Checking IP: "+iIPv4 + i);
-                Socket mySocket = new Socket();
-                SocketAddress address = new InetSocketAddress(iIPv4 + i, port);
 
+                Socket mySocket = new Socket();
+                if(i == 1 && !localhostChecked){
+                    localhostChecked = true;
+                    // Prüfe ob Server auf localhost läuft (Priorität)
+                    System.out.println("Checking IP: "+"127.0.0."+ i);
+                    i--;
+                    SocketAddress address = new InetSocketAddress("127.0.0.1", port);
+                    mySocket.connect(address, 5);
+                    // Hier nach ist Connection acquired!
+                    return "127.0.0.1";
+                }
+                System.out.println("Checking IP: "+iIPv4 + i);
+                SocketAddress address = new InetSocketAddress(iIPv4 + i, port);
                 mySocket.connect(address, 5);
                 // Hier nach ist Connection acquired!
                 return iIPv4+i;

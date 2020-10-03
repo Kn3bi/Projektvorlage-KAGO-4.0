@@ -1,7 +1,8 @@
 package my_project.control;
 
 import KAGO_framework.control.ViewController;
-import my_project.view.BackgroundGIF;
+import my_project.view.GIFDisplay;
+import my_project.view.StartView;
 
 import java.awt.event.MouseEvent;
 
@@ -12,11 +13,18 @@ import java.awt.event.MouseEvent;
 public class ProgramController {
 
     //Attribute
-    private double elapsedTime = 0;
+    private boolean stateInvoked;
 
     // Referenzen
     private ViewController viewController;  // diese Referenz soll auf ein Objekt der Klasse viewController zeigen. Über dieses Objekt wird das Fenster gesteuert.
     private NetworkController networkController;
+    private StartView startView;
+    private State state;
+
+    // Enum
+    enum State {
+        SCANNING, TRYAGAIN, CONNECTED, PLAYING, FINISHED
+    }
 
     /**
      * Konstruktor
@@ -33,12 +41,10 @@ public class ProgramController {
      * Diese Methode wird genau ein mal nach Programmstart aufgerufen. Achtung: funktioniert nicht im Szenario-Modus
      */
     public void startProgram() {
-        BackgroundGIF b = new BackgroundGIF("assets/images/background1.gif");
-        viewController.draw(b);
-        viewController.getSoundController().loadSound("assets/sounds/ac4_main_theme.mp3","title",true);
-        viewController.getSoundController().playSound("title");
         networkController = new NetworkController();
         networkController.startNetworkScan(1234);
+        setState(State.SCANNING);
+        startView = new StartView(viewController);
     }
 
     /**
@@ -48,7 +54,24 @@ public class ProgramController {
      * @param dt Zeit seit letzter Frame
      */
     public void updateProgram(double dt){
+        if(state == State.SCANNING){
+            if (networkController.getServerIP() != null){
+                if (networkController.getServerIP().equals("timeout")){
+                    startView.displayTryAgain();
+                    setState(State.TRYAGAIN);
+                } else {
+                    startView.displayConnected();
+                    setState(State.CONNECTED);
+                }
+            } else {
+                startView.displayScanning();
+            }
+        }
 
+    }
+
+    public void setState(State state){
+        this.state = state;
     }
 
     public void mouseClicked(MouseEvent e){}
