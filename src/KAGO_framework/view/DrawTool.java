@@ -30,15 +30,26 @@ public class DrawTool {
     }
 
     /**
-     * Zeichnet ein Objekt der Klasse BufferedImage
-     * @param bI Das zu zeichnende Objekt
-     * @param x Die x-Koordinate der oberen linken Ecke
-     * @param y Die y-Koordinate der oberen linken Ecke
+     * Zeichnet ein Objekt der Klasse BufferedImage.
+     * @param bI das BufferedImage, das gezeichnet wird
+     * @param x x-Koordinate der oberen linken Ecke
+     * @param y y-Koordinate der oberen linken Ecke
+     * @param degrees Grad, die das Bild rotiert sein soll (nicht Bogemaß)
+     * @param scale Faktor mit dem das Bild skaliert werden soll (für Wirkung > 0)
      */
-    public void drawRotatedImage(BufferedImage bI, double x, double y, double degrees){
+    public void drawTransformedImage(BufferedImage bI, double x, double y, double degrees, double scale){
         if (graphics2D!= null){
             AffineTransform transform = new AffineTransform();
+
             transform.translate(x,y);
+            if(scale > 0) {
+                transform.scale(scale,scale);
+                if(scale < 1){
+                    transform.translate(+bI.getWidth() * (1-scale), +bI.getHeight() * (1-scale));
+                } else {
+                    transform.translate(-bI.getWidth()*(scale-1)*0.25, -bI.getHeight()*(scale-1)*0.25);
+                }
+            }
             transform.rotate( Math.toRadians(degrees), bI.getWidth()/2, bI.getHeight()/2 );
             graphics2D.drawImage(bI, transform, null);
         }

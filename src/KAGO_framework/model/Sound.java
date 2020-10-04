@@ -82,6 +82,24 @@ public class Sound {
         return false;
     }
 
+    /**
+     * Setzt die Lautstärke
+     * @param v die neue Lautstärke zwischen 0 und 1
+     */
+    public void setVolume(double v){
+        if(v >= 0 && v <= 1){
+            mediaPlayer.setVolume(v);
+        }
+    }
+
+    /**
+     * Gibt die aktuelle Lautstärke zurück.
+     * @return die Lautstärke zwischen 0 und 1
+     */
+    public double getVolume(){
+        return mediaPlayer.getVolume();
+    }
+
 
     /**
      * Liefert den Dateinamen der Sounddatei zurück.

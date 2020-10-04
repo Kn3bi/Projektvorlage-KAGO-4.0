@@ -1,5 +1,6 @@
 package KAGO_framework.control;
 
+import KAGO_framework.Config;
 import KAGO_framework.model.Sound;
 import KAGO_framework.model.abitur.datenstrukturen.Queue;
 import javafx.embed.swing.JFXPanel;
@@ -188,6 +189,36 @@ public class SoundController {
             }
         }
         return false;
+    }
+
+    /**
+     * Ändert die Lautstärke eines Sounds. Funktioniert erst, wenn das Programm schon etwas läuft.
+     * @param soundName der gesuchte Sound (muss geladen sein)
+     * @param volume die neue Lautstärke (zwischen 0 und 1)
+     */
+    public void setVolume(String soundName, double volume){
+        Sound toChange = getSound(soundName);
+        try{
+            toChange.setVolume(volume);
+        } catch (Exception e){
+            if( Config.DEBUG) System.out.println("Lautstärke konnte nicht angepasst werden. Bitte Anforderung etwas verzögern (ein paar Sekunden).");
+        }
+    }
+
+    /**
+     * Sucht einen geladenen Sound heraus
+     * @param soundName der gesuchte Sound
+     * @return das Sound-Objekt, falls vorhanden
+     */
+    private Sound getSound(String soundName){
+        Iterator<Sound> iterator = loadedSounds.iterator();
+        while (iterator.hasNext()) {
+            Sound currentSound = iterator.next();
+            if (currentSound.getName().equals(soundName)){
+                return currentSound;
+            }
+        }
+        return null;
     }
 
 }

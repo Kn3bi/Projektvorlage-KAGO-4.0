@@ -1,12 +1,18 @@
 package my_project.control;
 
+import my_project.model.NetworkClient;
+import my_project.model.Player;
+
 import javax.swing.*;
 import java.io.IOException;
 import java.net.*;
 
 public class NetworkController {
 
+    private NetworkClient networkClient;
+
     private String serverIP;
+    private int port;
     private boolean isWorking;
     private int maximumCycles;
     private int currentCycle;
@@ -14,7 +20,7 @@ public class NetworkController {
     public NetworkController(){
         serverIP = null;
         isWorking = false;
-        maximumCycles = 5;
+        maximumCycles = 20;
     }
 
     /**
@@ -24,7 +30,9 @@ public class NetworkController {
      * @param port Der zu prüfende Port
      */
     public void startNetworkScan(int port){
+        this.port = port;
         if(!isWorking) {
+            this.serverIP = null;
             isWorking = true;
             currentCycle = 0;
             new SwingWorker() {
@@ -96,6 +104,31 @@ public class NetworkController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Erstellt einen neuen Client, der sich mit dem Server verbindet.
+     */
+    public void startConnection(){
+        if(serverIP != null && !serverIP.equals("timeout")){
+            networkClient = new NetworkClient(serverIP,port,this);
+        }
+    }
+
+    /**
+     * Sendet dem Server den Spielernamen
+     * @param player das Spielerobjekt der Partie
+     */
+    public void sendPlayerName(Player player){
+        //networkClient.send(msg);
+    }
+
+    /**
+     * Verarbeitet alle Informatonen, die der Server an den NetworkClient schickt.
+     * @param msg die Nachricht des Servers
+     */
+    public void processServerRequest(String msg){
+        // todo Netzwerkschnittstelle implementieren
     }
 
     public String getServerIP() {
