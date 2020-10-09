@@ -50,6 +50,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
 
     // Attribute
     private int dt;
+    private long lastLoop_Drawables, elapsedTime_Drawables;
     private long lastLoop, elapsedTime;
     private int currentScene;
     private boolean notChangingInteractables, notChangingDrawables;
@@ -76,6 +77,13 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
         } else {
             if ( Config.INFO_MESSAGES) System.out.println("** Achtung! Sound deaktiviert => soundController ist NULL (kann in Config geändert werden). **");
         }
+        startProgram();
+    }
+
+    /**
+     * Startet das Programm, nachdem Vorarbeiten abgeschlossen sind.
+     */
+    private void startProgram(){
         gameController = new ProgramController(this);
         gameController.startProgram();
         // Starte nebenlaeufigen Prozess, der Zeichnen und Animation uebernimmt
@@ -268,14 +276,15 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     public void actionPerformed(ActionEvent e) {
         elapsedTime = System.nanoTime() - lastLoop;
         lastLoop = System.nanoTime();
-        dt = (int) ((elapsedTime / 1000000L)+0.5);
-        if ( dt == 0 ) dt = 1;
+        int dt = (int) ((elapsedTime / 1000000L));
+        double dtSeconds = (double)dt/1000;
+        if ( dtSeconds == 0 ) dtSeconds = 0.01;
         // Führe Berechnungen und Aktualisierungen im Hauptobjekt aus
-        gameController.updateProgram((double)dt/1000);
+        gameController.updateProgram(dtSeconds);
         // Zeichne alle Objekte der aktuellen Szene
         scenes.get(currentScene).drawingPanel.repaint();
         // Aktualisiere SoundController, wenn vorhanden
-        if(soundController != null) soundController.update((double)dt/1000);
+        if(soundController != null) soundController.update(dtSeconds);
     }
 
     /**
@@ -284,12 +293,17 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param drawTool
      */
     public void drawAndUpdateObjects(DrawTool drawTool){
+        elapsedTime_Drawables = System.nanoTime() - lastLoop_Drawables;
+        lastLoop_Drawables = System.nanoTime();
+        int dt = (int) ((elapsedTime / 1000000L));
+        double dtSeconds = (double)dt/1000;
+        if ( dtSeconds == 0 ) dtSeconds = 0.01;
         Iterator<Drawable> drawIterator = scenes.get(currentScene).drawables.iterator();
         while (drawIterator.hasNext() && notChangingDrawables){
             Drawable currentObject = drawIterator.next();
             currentObject.draw(drawTool);
-            currentObject.update((double)dt/1000);
-            if (my_project.Config.useSound && soundController != null) soundController.update((double)dt/1000);
+            currentObject.update(dtSeconds);
+            if (my_project.Config.useSound && soundController != null) soundController.update(dtSeconds);
         }
     }
 

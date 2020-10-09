@@ -221,4 +221,12 @@ public class SoundController {
         return null;
     }
 
+    /**
+     * Liefert, ob der Controller einsatzbereit ist
+     * @return true, falls einsatzbereit, sonst false
+     */
+    public boolean getInitialized(){
+        return initialized;
+    }
+
 }

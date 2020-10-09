@@ -29,7 +29,7 @@ public class ProgramController {
 
     // Enum
     public enum State {
-        SCANNING, TRYAGAIN, PLAYERSELECT, PLAYING, FINISHED
+        SCANNING, TRYAGAIN, PLAYERSELECT, WAITINGFORNAME, PLAYING, FINISHED
     }
 
     /**
@@ -47,7 +47,7 @@ public class ProgramController {
      * Diese Methode wird genau ein mal nach Programmstart aufgerufen. Achtung: funktioniert nicht im Szenario-Modus
      */
     public void startProgram() {
-        networkController = new NetworkController();
+        networkController = new NetworkController(this);
         while(targetPort < 1000 || targetPort > 65000) {
             try {
                 String m = JOptionPane.showInputDialog("Port für Spielserver (1000 bis 65000) eingeben:");
@@ -91,17 +91,95 @@ public class ProgramController {
         if (state == State.SCANNING) networkController.startNetworkScan(targetPort);
         if (state == State.PLAYERSELECT){
             startView.disposeView();
-            //todo Hier Serververbingung einbauen!
+            networkController.startConnection();
             playerSelectView = new PlayerSelectView(viewController,this);
         }
         if (state == State.PLAYING){
+            player = new Player(playerSelectView.getName());
             playerSelectView.disposeView();
-            player = new Player(playerSelectView.getName(),playerSelectView.getPlayerIcons()[playerSelectView.getSelectedIconIndex()]);
+            playView = new PlayView(viewController,this,playerSelectView.getPlayerIcons(),playerSelectView.getSelectedIconIndex(),player.getName(),player.getPunkte());
             networkController.sendPlayerName(player);
-            playView = new PlayView(viewController,this);
-        }
+            viewController.getSoundController().stopSound("title");
+       }
     }
 
     public void mouseClicked(MouseEvent e){}
+
+    public void sendSelectionToServer(int selectedIndex){
+        networkController.sendPlayerChoice(convertNumberToLetter(selectedIndex));
+    }
+
+    public void requestSelectionFromPlayer(){
+        playView.activateChoosing();
+    }
+
+    public void verarbeiteGegnernamen(String name){
+        playView.setNextEnemy(name);
+    }
+
+    public void verarbeiteGegnerauswahl(String auswahl){
+        playView.setEnemyChoice(convertLetterToNumber(auswahl));
+    }
+
+    public void verarbeiteNeuePunkte(String punkte){
+        try{
+            int newPoints = Integer.parseInt(punkte);
+            if(newPoints > player.getPunkte() + 1){
+                playView.showRoundAnimation(PlayView.RoundAnimation.WINNING);
+            } else if (newPoints == player.getPunkte()+1){
+                playView.showRoundAnimation(PlayView.RoundAnimation.DRAW);
+            } else {
+                playView.showRoundAnimation(PlayView.RoundAnimation.LOOSING);
+            }
+            player.setPunkte(newPoints);
+            playView.setPlayerPoints(newPoints);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    private int convertLetterToNumber(String a){
+        switch (a){
+            case "A": return 0;
+            case "B": return 1;
+            case "C": return 2;
+            case "D": return 3;
+            case "E": return 4;
+        }
+        return -1;
+    }
+
+    private String convertNumberToLetter(int a){
+        switch(a){
+            case 0: return "A";
+            case 1: return "B";
+            case 2: return "C";
+            case 3: return "D";
+            case 4: return "E";
+        }
+        return "";
+    }
+
+    public void verarbeiteNeuenStatus(String status){
+        if(status.equals("gewonnen")){
+
+        }
+        if(status.equals("verloren")){
+
+        }
+        if(status.equals("aussetzen")){
+
+        }
+        if(status.startsWith("wartenAuf")){
+
+        }
+        if(status.equals("startDesTurniers")){
+
+        }
+    }
 
 }

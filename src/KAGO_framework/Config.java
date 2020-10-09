@@ -17,6 +17,6 @@ public class Config {
 
     // Schaltet die Infomeldungen des Frameworks an oder aus
     public final static boolean INFO_MESSAGES = true;
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
 
 }

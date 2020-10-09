@@ -7,6 +7,7 @@ import my_project.control.ProgramController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
@@ -17,7 +18,7 @@ public class PlayerSelectView extends GameView {
     private String name = "Mr. Bust";
 
     private BufferedImage[] playerIcons;
-    private GraphicalObject change, start;
+    private GraphicalObject change, start, waiting;
     private GIFDisplay background;
 
     public PlayerSelectView(ViewController viewController, ProgramController programController){
@@ -37,6 +38,9 @@ public class PlayerSelectView extends GameView {
         start = new GraphicalObject("assets/images/start.png");
         start.setX(300-start.getWidth()/2);
         start.setY(510);
+        waiting = new GraphicalObject("assets/images/waiting.png");
+        waiting.setX(300-start.getWidth()/2);
+        waiting.setY(510);
         background = new GIFDisplay("assets/images/background2.gif",0,0);
         viewController.getSoundController().loadSound("assets/sounds/speech/choosenow.mp3","choose",false);
         viewController.getSoundController().loadSound("assets/sounds/speech/rename.mp3","rename",false);
@@ -46,7 +50,10 @@ public class PlayerSelectView extends GameView {
 
     @Override
     public void keyReleased(int key) {
-
+        super.keyReleased(key);
+        if(key == KeyEvent.VK_N){
+            programController.setState(ProgramController.State.WAITINGFORNAME);
+        }
     }
 
     @Override
@@ -82,7 +89,8 @@ public class PlayerSelectView extends GameView {
             name = m;
         }
         if(start.collidesWith(x,y)){
-            programController.setState(ProgramController.State.PLAYING);
+            if(programController.getState() == ProgramController.State.WAITINGFORNAME)
+                programController.setState(ProgramController.State.PLAYING);
         }
     }
 
@@ -97,7 +105,11 @@ public class PlayerSelectView extends GameView {
         drawTool.drawText(300 - 10*6,300,"Your name:");
         drawTool.drawText(300 - name.length()*6,360,name);
         change.draw(drawTool);
-        start.draw(drawTool);
+        if(programController.getState() == ProgramController.State.WAITINGFORNAME){
+            start.draw(drawTool);
+        } else {
+            waiting.draw(drawTool);
+        }
         for(int i = 0; i < 4; i++){
             if(selectedIconIndex == i){
                 drawTool.setCurrentColor(255,255,0,200);
@@ -147,4 +159,5 @@ public class PlayerSelectView extends GameView {
     public String getName() {
         return name;
     }
+
 }
