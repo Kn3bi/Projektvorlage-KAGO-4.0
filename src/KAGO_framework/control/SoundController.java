@@ -1,5 +1,6 @@
 package KAGO_framework.control;
 
+import KAGO_framework.Config;
 import KAGO_framework.model.Sound;
 import KAGO_framework.model.abitur.datenstrukturen.Queue;
 import javafx.embed.swing.JFXPanel;
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public class SoundController {
 
-    private double soundDelay = 3;
+    private double soundDelay = 1;
 
     /**
      * Kapselt die nötigen Daten für Sounds, die noch geladen werden
@@ -150,6 +151,7 @@ public class SoundController {
 
     /**
      * Spielt einen Sound (ggf. wiederholt) ab. Wenn der Sound bereits läuft, wird er zuvor gestoppt.
+     * WICHTIGER HINWEIS: eine mp3-Datei kann evtl. nicht wiedergegeben werden, wenn spezielle Album-Art oder ähnliches integriert ist - bei Problemen erst andere mp3s testen
      * @param name Der beim Anlegen des Sounds vergebene, eindeutige Name.
      */
     public void playSound(String name){
@@ -187,6 +189,44 @@ public class SoundController {
             }
         }
         return false;
+    }
+
+    /**
+     * Ändert die Lautstärke eines Sounds. Funktioniert erst, wenn das Programm schon etwas läuft.
+     * @param soundName der gesuchte Sound (muss geladen sein)
+     * @param volume die neue Lautstärke (zwischen 0 und 1)
+     */
+    public void setVolume(String soundName, double volume){
+        Sound toChange = getSound(soundName);
+        try{
+            toChange.setVolume(volume);
+        } catch (Exception e){
+            if( Config.DEBUG) System.out.println("Lautstärke konnte nicht angepasst werden. Bitte Anforderung etwas verzögern (ein paar Sekunden).");
+        }
+    }
+
+    /**
+     * Sucht einen geladenen Sound heraus
+     * @param soundName der gesuchte Sound
+     * @return das Sound-Objekt, falls vorhanden
+     */
+    private Sound getSound(String soundName){
+        Iterator<Sound> iterator = loadedSounds.iterator();
+        while (iterator.hasNext()) {
+            Sound currentSound = iterator.next();
+            if (currentSound.getName().equals(soundName)){
+                return currentSound;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Liefert, ob der Controller einsatzbereit ist
+     * @return true, falls einsatzbereit, sonst false
+     */
+    public boolean getInitialized(){
+        return initialized;
     }
 
 }

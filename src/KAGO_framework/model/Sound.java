@@ -17,6 +17,8 @@ public class Sound {
     // Attribute
     private String filename;
     private String name;
+    private String path;
+    private Media sound;
 
     // Referenz
     private MediaPlayer mediaPlayer;
@@ -48,15 +50,17 @@ public class Sound {
         this.filename = filename;
         this.name = name;
         File f = new File(System.getProperty("user.dir")+"/"+filename);
-        Media sound = new Media(f.toURI().toString());
+        sound = new Media(f.toURI().toString());
+        path = f.toURI().toString();
         mediaPlayer = new MediaPlayer(sound);
     }
 
     /**
      * Spielt den Sound ab.
+     * Wichtiger Hinweis: die mp3-Datei kann evtl. nicht wiedergegeben werden, wenn spezielle Album-Art oder ähnliches integriert ist - bei Problemen erst andere mp3s testen
      */
     public void play() {
-        if ( Config.DEBUG) System.out.println("Versuche: "+this.getFilename()+" abzuspielen als benannter Ton: "+this.getName());
+        if ( Config.DEBUG) System.out.println("Versuche: "+this.getFilename()+" abzuspielen als benannter Ton: "+this.getName()+" - Pfad: "+path+" - MediaPlayer: "+mediaPlayer+" - Media: "+sound);
         mediaPlayer.play();
     }
 
@@ -76,6 +80,24 @@ public class Sound {
     public boolean isPlaying(){
         if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) return true;
         return false;
+    }
+
+    /**
+     * Setzt die Lautstärke
+     * @param v die neue Lautstärke zwischen 0 und 1
+     */
+    public void setVolume(double v){
+        if(v >= 0 && v <= 1){
+            mediaPlayer.setVolume(v);
+        }
+    }
+
+    /**
+     * Gibt die aktuelle Lautstärke zurück.
+     * @return die Lautstärke zwischen 0 und 1
+     */
+    public double getVolume(){
+        return mediaPlayer.getVolume();
     }
 
 

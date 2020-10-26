@@ -50,13 +50,17 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
 
     // Attribute
     private int dt;
+    private long lastLoop_Drawables, elapsedTime_Drawables;
     private long lastLoop, elapsedTime;
     private int currentScene;
+    private boolean notChangingInteractables, notChangingDrawables;
 
     /**
      * Erzeugt ein Objekt zur Kontrolle des Programmflusses.
      */
     public ViewController(){
+        notChangingDrawables = true;
+        notChangingInteractables = true;
         scenes = new ArrayList<>();
         currentlyPressedKeys = new ArrayList<>();
         // Erzeuge Fenster und erste Szene
@@ -73,6 +77,13 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
         } else {
             if ( Config.INFO_MESSAGES) System.out.println("** Achtung! Sound deaktiviert => soundController ist NULL (kann in Config geändert werden). **");
         }
+        startProgram();
+    }
+
+    /**
+     * Startet das Programm, nachdem Vorarbeiten abgeschlossen sind.
+     */
+    private void startProgram(){
         gameController = new ProgramController(this);
         gameController.startProgram();
         // Starte nebenlaeufigen Prozess, der Zeichnen und Animation uebernimmt
@@ -199,7 +210,11 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void removeDrawable(Drawable d){
         if (d != null){
-            SwingUtilities.invokeLater(() -> scenes.get(currentScene).drawables.remove(d));
+            notChangingDrawables = false;
+            SwingUtilities.invokeLater(() -> {
+                scenes.get(currentScene).drawables.remove(d);
+                notChangingDrawables = true;
+            });
         }
     }
 
@@ -211,7 +226,11 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void removeDrawable(Drawable d, int sceneIndex){
         if ( sceneIndex < scenes.size() && d != null){
-            SwingUtilities.invokeLater(() -> scenes.get(sceneIndex).drawables.remove(d));
+            notChangingDrawables = false;
+            SwingUtilities.invokeLater(() -> {
+                scenes.get(sceneIndex).drawables.remove(d);
+                notChangingDrawables = true;
+            });
         }
     }
 
@@ -222,7 +241,11 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void removeInteractable(Interactable i){
         if (i != null){
-            SwingUtilities.invokeLater(() -> scenes.get(currentScene).interactables.remove(i));
+            notChangingInteractables = false;
+            SwingUtilities.invokeLater(() -> {
+                scenes.get(currentScene).interactables.remove(i);
+                notChangingInteractables = true;
+            });
         }
     }
 
@@ -234,7 +257,11 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void removeInteractable(Interactable i, int sceneIndex){
         if ( sceneIndex < scenes.size() && i != null){
-            SwingUtilities.invokeLater(() -> scenes.get(sceneIndex).interactables.remove(i));
+            notChangingInteractables = false;
+            SwingUtilities.invokeLater(() -> {
+                scenes.get(sceneIndex).interactables.remove(i);
+                notChangingInteractables = true;
+            });
         }
     }
 
@@ -249,14 +276,15 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     public void actionPerformed(ActionEvent e) {
         elapsedTime = System.nanoTime() - lastLoop;
         lastLoop = System.nanoTime();
-        dt = (int) ((elapsedTime / 1000000L)+0.5);
-        if ( dt == 0 ) dt = 1;
+        int dt = (int) ((elapsedTime / 1000000L));
+        double dtSeconds = (double)dt/1000;
+        if ( dtSeconds == 0 ) dtSeconds = 0.01;
         // Führe Berechnungen und Aktualisierungen im Hauptobjekt aus
-        gameController.updateProgram((double)dt/1000);
+        gameController.updateProgram(dtSeconds);
         // Zeichne alle Objekte der aktuellen Szene
         scenes.get(currentScene).drawingPanel.repaint();
         // Aktualisiere SoundController, wenn vorhanden
-        if(soundController != null) soundController.update(dt);
+        if(soundController != null) soundController.update(dtSeconds);
     }
 
     /**
@@ -265,12 +293,17 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param drawTool
      */
     public void drawAndUpdateObjects(DrawTool drawTool){
+        elapsedTime_Drawables = System.nanoTime() - lastLoop_Drawables;
+        lastLoop_Drawables = System.nanoTime();
+        int dt = (int) ((elapsedTime / 1000000L));
+        double dtSeconds = (double)dt/1000;
+        if ( dtSeconds == 0 ) dtSeconds = 0.01;
         Iterator<Drawable> drawIterator = scenes.get(currentScene).drawables.iterator();
-        while (drawIterator.hasNext()){
+        while (drawIterator.hasNext() && notChangingDrawables){
             Drawable currentObject = drawIterator.next();
             currentObject.draw(drawTool);
-            currentObject.update((double)dt/1000);
-            if (my_project.Config.useSound && soundController != null) soundController.update((double)dt/1000);
+            currentObject.update(dtSeconds);
+            if (my_project.Config.useSound && soundController != null) soundController.update(dtSeconds);
         }
     }
 
@@ -297,7 +330,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     @Override
     public void mouseReleased(MouseEvent e) {
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
             tmpInteractable.mouseReleased(e);
         }
@@ -317,7 +350,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     public void mouseClicked(MouseEvent e) {
         gameController.mouseClicked(e);
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
             tmpInteractable.mouseClicked(e);
         }
@@ -326,7 +359,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     @Override
     public void mouseDragged(MouseEvent e) {
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
             tmpInteractable.mouseDragged(e);
         }
@@ -335,7 +368,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     @Override
     public void mouseMoved(MouseEvent e) {
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
             tmpInteractable.mouseMoved(e);
         }
@@ -344,7 +377,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     @Override
     public void mousePressed(MouseEvent e) {
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
             tmpInteractable.mousePressed(e);
         }
@@ -359,7 +392,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     public void keyPressed(KeyEvent e) {
         if (!currentlyPressedKeys.contains(e.getKeyCode())) currentlyPressedKeys.add(e.getKeyCode());
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
             tmpInteractable.keyPressed(e.getKeyCode());
         }
@@ -370,7 +403,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
         if (currentlyPressedKeys.contains(e.getKeyCode()))
             currentlyPressedKeys.remove(Integer.valueOf(e.getKeyCode()));
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
             tmpInteractable.keyReleased(e.getKeyCode());
         }

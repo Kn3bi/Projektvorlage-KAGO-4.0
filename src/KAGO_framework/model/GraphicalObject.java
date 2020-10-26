@@ -13,7 +13,7 @@ import java.io.IOException;
  * Zur Vererbung. Methoden können nach Bedarf überschrieben werden.
  * Vorgegebene Klasse des Frameworks. Modifikation auf eigene Gefahr.
  */
-public abstract class GraphicalObject implements Drawable {
+public class GraphicalObject implements Drawable {
 
     // Attribute: um Konstruktoraufrufzwang zu vermeiden wurden hier AUSNAHMSWEISE Startwerte gesetzt
     protected double x = 0, y = 0; // Die Koordinaten des Objekts
@@ -21,6 +21,35 @@ public abstract class GraphicalObject implements Drawable {
 
     // Referenzen
     private BufferedImage myImage;
+
+    /**
+     * Der generische Konstruktur ermöglicht einen optionalen super-Aufruf in den Unterklassen
+     */
+    public GraphicalObject(){
+
+    }
+
+    /**
+     * Mit diesem Konstruktor kann direkt ein GraphicalObject mit Bild und grundlegenden Methoden
+     * verwendet werden.
+     * @param picturePath der Pfad zur Bilddatei
+     */
+    public GraphicalObject(String picturePath){
+        this.setNewImage(picturePath);
+    }
+
+    /**
+     * Mit diesem Konstruktor kann direkt ein GraphicalObject mit Bild und grundlegenden Methoden
+     * verwendet werden. Zudem kann es positioniert werden.
+     * @param x die x-Koordinate (obere linke Ecke)
+     * @param y die y-Koordinate (obere linke Ecke)
+     * @param picturePath
+     */
+    public GraphicalObject(String picturePath, double x, double y){
+        this.x = x;
+        this.y = y;
+        this.setNewImage(picturePath);
+    }
 
     /**
      * Lädt ein Bild, das zur Repräsentation des Objekts benutzt werden kann.
@@ -66,14 +95,18 @@ public abstract class GraphicalObject implements Drawable {
      * Wird vom Hintergrundprozess für jeden Frame aufgerufen. Nur hier kann die grafische Repräsentation des Objekts realisiert
      * werden. Es ist möglich über das Grafikobjekt "drawTool" ein Bild zeichnen zu lassen, aber auch geometrische Formen sind machbar.
      */
-    public abstract void draw(DrawTool drawTool);
+    public void draw(DrawTool drawTool){
+        if(getMyImage() != null) drawTool.drawImage(getMyImage(),x,y);
+    }
 
     @Override
     /**
      * Wird vom Hintergrundprozess für jeden Frame aufgerufen. Hier kann das verhalten des Objekts festgelegt werden, zum Beispiel
      * seine Bewegung.
      */
-    public abstract void update(double dt);
+    public void update(double dt){
+
+    }
 
     /**
      * Überprüft, ob das übergebene Objekt mit diesem GraphicalObject kollidiert (Rechteckkollision). Dabei werden die Koordinaten und
@@ -83,6 +116,18 @@ public abstract class GraphicalObject implements Drawable {
      */
     public boolean collidesWith(GraphicalObject gO){
         if ( x < gO.getX()+gO.getWidth() && x + width > gO.getX() && y < gO.getY() + gO.getHeight() && y + height > gO.getY() ) return true;
+        return false;
+    }
+
+    /**
+     * Prüft, ob ein Punkt innerhalb des GraphicalObjects liegt. Dazu müssen x,y,width und height vom
+     * GraphicalObject gesetzt sein (passiert bei Bildzuweisung automatisch)
+     * @param pX die x-Koordinate des Punktes
+     * @param pY die y-Koordinate des Punktes
+     * @return true, falls der Punkt im Objekt liegt, sonst false
+     */
+    public boolean collidesWith(double pX, double pY){
+        if ( pX < getX() + getWidth() && pX > getX() && pY < getY() + getHeight() && pY > getY() ) return true;
         return false;
     }
 
