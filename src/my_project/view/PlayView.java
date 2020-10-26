@@ -46,6 +46,7 @@ public class PlayView extends GameView {
         this.playername = playername;
         this.playerPoints = playerPoints;
         enemyIconIndex = -1;
+        viewController.getSoundController().stopSound("title");
         viewController.getSoundController().loadSound("assets/sounds/battle.mp3","battle",true);
         viewController.getSoundController().playSound("battle");
         background = new GIFDisplay("assets/images/background3.gif",0,0);
@@ -198,6 +199,7 @@ public class PlayView extends GameView {
 
     @Override
     public void update(double dt){
+        viewController.getSoundController().setVolume("battle",0.25);
         if(currentAni != RoundAnimation.NONE && aniTimer <= 0){
             selectedIndex = -1;
             selectedEnemyIndex = -1;

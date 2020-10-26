@@ -99,7 +99,6 @@ public class ProgramController {
             playerSelectView.disposeView();
             playView = new PlayView(viewController,this,playerSelectView.getPlayerIcons(),playerSelectView.getSelectedIconIndex(),player.getName(),player.getPunkte());
             networkController.sendPlayerName(player);
-            viewController.getSoundController().stopSound("title");
        }
     }
 
