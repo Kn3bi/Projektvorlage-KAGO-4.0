@@ -1,4 +1,4 @@
-package my_project.view;
+package KAGO_framework.view;
 
 import KAGO_framework.control.ViewController;
 import KAGO_framework.model.InteractiveGraphicalObject;
@@ -6,7 +6,11 @@ import KAGO_framework.view.DrawTool;
 import my_project.control.ProgramController;
 import java.awt.event.MouseEvent;
 
-public abstract class GameView extends InteractiveGraphicalObject {
+/**
+ * Diese Klasse stellt eine Vorlage für die Konstruktion einer GUI bereit, die sich
+ * aus grafischen Objekten des Frameworks zusammensetzt
+ */
+public abstract class ProgramView extends InteractiveGraphicalObject {
 
     protected ViewController viewController;
     protected ProgramController programController;
@@ -16,7 +20,7 @@ public abstract class GameView extends InteractiveGraphicalObject {
      * @param viewController das ViewController-Objekt des Frameworks
      * @param programController das ProgramController-Objekt des Frameworks
      */
-    public GameView(ViewController viewController, ProgramController programController){
+    public ProgramView(ViewController viewController, ProgramController programController){
         this.viewController = viewController;
         this.programController = programController;
         viewController.register(this);

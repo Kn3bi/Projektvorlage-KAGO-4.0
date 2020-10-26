@@ -21,7 +21,7 @@ public class MainController {
      * Diese Methode startet das gesamte Framework und erzeugt am Ende dieses Prozesses ein Objekt der Klasse
      * ProgramController aus dem Paket "my_project > control"
      */
-    public static void startFramework(boolean isScenarioMode){
+    public static void startFramework(){
         if ( Config.INFO_MESSAGES) System.out.println("***** PROGRAMMSTART ("+" Framework: "+Config.VERSION+") *****.");
         if ( Config.INFO_MESSAGES) System.out.println("** Supported Java-Versions: "+ Config.JAVA_SUPPORTED);
         if ( Config.INFO_MESSAGES) System.out.println("");

@@ -2,6 +2,8 @@ package my_project.view;
 
 import KAGO_framework.control.ViewController;
 import KAGO_framework.view.DrawTool;
+import KAGO_framework.view.ProgramView;
+import KAGO_framework.view.simple_gui.GIFPainter;
 import my_project.control.ProgramController;
 
 import java.awt.*;
@@ -9,12 +11,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class StartView extends GameView {
+public class StartView extends ProgramView {
 
     private int state = 0;
     private int offset = 0;
 
-    private GIFDisplay background;
+    private GIFPainter background;
     private BufferedImage arrowL, arrowR, retry;
 
     public StartView(ViewController viewController, ProgramController programController){
@@ -26,7 +28,7 @@ public class StartView extends GameView {
         arrowL = this.createImage("assets/images/arrow_left.png");
         arrowR = this.createImage("assets/images/arrow_right.png");
         retry = this.createImage("assets/images/try_again.png");
-        background = new GIFDisplay("assets/images/background1.gif",0,0);
+        background = new GIFPainter("assets/images/background1.gif",0,0);
     }
 
     public void displayScanning(){

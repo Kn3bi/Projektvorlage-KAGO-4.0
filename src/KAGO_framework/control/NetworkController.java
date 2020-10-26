@@ -1,27 +1,53 @@
-package my_project.control;
+package KAGO_framework.control;
 
-import my_project.model.NetworkClient;
-import my_project.model.Player;
+import KAGO_framework.Config;
+import KAGO_framework.model.abitur.netz.Client;
+import my_project.control.ProgramController;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.net.*;
 
-public class NetworkController {
+public abstract class NetworkController{
 
-    private NetworkClient networkClient;
-    private ProgramController programController;
+    /**
+     * Intere Unterklasse der Abiturklasse Client. Dient zum Verbindungsaufbau.
+     */
+    private class NetworkClient extends Client {
 
-    private String serverIP;
-    private int port;
-    private boolean isWorking;
-    private int maximumCycles;
-    private int currentCycle;
+        private NetworkController networkController;
+
+        public NetworkClient(String pServerIP, int pServerPort, NetworkController networkController) {
+            super(pServerIP, pServerPort);
+            this.networkController = networkController;
+        }
+
+        @Override
+        public void processMessage(String pMessage) {
+            networkController.processServerRequest(pMessage);
+            if(Config.DEBUG)System.out.println("Received: "+pMessage);
+        }
+
+        @Override
+        public void send(String pMessage){
+            super.send(pMessage);
+            if(Config.DEBUG)System.out.println("Sending: "+pMessage);
+        }
+    }
+
+    protected NetworkClient networkClient;
+    protected ProgramController programController;
+
+    protected String serverIP;
+    protected int port;
+    protected boolean isWorking;
+    protected int maximumCycles;
+    protected int currentCycle;
 
     public NetworkController(ProgramController programController){
         serverIP = null;
         isWorking = false;
-        maximumCycles = 20;
+        maximumCycles = 20; // Anzahl der Suchdurchläufe
         this.programController = programController;
     }
 
@@ -102,7 +128,6 @@ public class NetworkController {
         InetAddress ip;
         try {
             ip = InetAddress.getLocalHost();
-            //System.out.println("Your current IP address : " + ip.getHostAddress().replace(ip.getHostName()+"/",""));
             String[] adressTokens = (ip.getHostAddress().replace(ip.getHostName()+"/","")).split("\\.");
             return adressTokens[0]+"."+adressTokens[1]+"."+adressTokens[2]+".";
         } catch (UnknownHostException e) {
@@ -116,56 +141,32 @@ public class NetworkController {
      */
     public void startConnection(){
         if(serverIP != null && !serverIP.equals("timeout")){
-            System.out.println("Trying to connect to: "+serverIP+" on "+port);
+            System.out.println("NetworkController: Trying to connect to: "+serverIP+" on "+port);
             networkClient = new NetworkClient(serverIP,port,this);
         }
     }
 
     /**
-     * Sendet dem Server den Spielernamen
-     * @param player das Spielerobjekt der Partie
+     * Zu implementierende Methode, die Reaktionen auf Nachrichten vom Server bestimmt.
+     * @param msg Die vom Server eingehende Nachricht als String
      */
-    public void sendPlayerName(Player player){
-        networkClient.send("name"+"$"+player.getName());
-    }
+    public abstract void processServerRequest(String msg);
 
-    public void sendPlayerChoice(String choice){
-        networkClient.send("spiele"+"$"+choice);
+    /**
+     * Methode zum Senden von Strings an den Server
+     * @param msg die Nachricht, die an den Server gesendet werden soll.
+     */
+    public void send(String msg){
+        this.networkClient.send(msg);
     }
 
     /**
-     * Verarbeitet alle Informatonen, die der Server an den NetworkClient schickt.
-     * @param msg die Nachricht des Servers
+     * Die Rückgabe ist null, falls momentan keine IP bekannt ist und gesucht wird. Die Rückgabe ist "Timeout", falls
+     * die Suche erfolglos eingestellt wurde.
+     * @return die Server IP wie beschrieben
      */
-    public void processServerRequest(String msg){
-        // todo Netzwerkschnittstelle implementieren
-        if(msg.equals("sende$name")){
-            programController.setState(ProgramController.State.WAITINGFORNAME);
-        } else if(msg.equals("sende$möglichkeiten")){
-            programController.requestSelectionFromPlayer();
-        } else {
-            String[] tokens = msg.split("\\$");
-            if(tokens[0].equals("gegner")){
-                if(tokens[1].equals("name")){
-                    programController.verarbeiteGegnernamen(tokens[2]);
-                }
-                if(tokens[1].equals("auswahl")){
-                    programController.verarbeiteGegnerauswahl(tokens[2]);
-                }
-            }
-            if(tokens[0].equals("punkte")){
-                programController.verarbeiteNeuePunkte(tokens[1]);
-            }
-            if(tokens[0].equals("status")){
-                programController.verarbeiteNeuenStatus(tokens[1]);
-            }
-        }
-    }
-
     public String getServerIP() {
         return serverIP;
     }
-
-
 
 }

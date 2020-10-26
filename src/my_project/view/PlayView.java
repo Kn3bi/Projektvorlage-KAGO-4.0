@@ -3,6 +3,8 @@ package my_project.view;
 import KAGO_framework.control.ViewController;
 import KAGO_framework.model.GraphicalObject;
 import KAGO_framework.view.DrawTool;
+import KAGO_framework.view.ProgramView;
+import KAGO_framework.view.simple_gui.GIFPainter;
 import my_project.control.ProgramController;
 
 import java.awt.*;
@@ -10,9 +12,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class PlayView extends GameView {
+public class PlayView extends ProgramView {
 
-    private GIFDisplay background, arrow;
+    private GIFPainter background, arrow;
     private GraphicalObject[] gameIcons;
     private BufferedImage cross, waiting, fightingAgainst, chooseNow;
     private BufferedImage[] playerImageIcons;
@@ -49,8 +51,8 @@ public class PlayView extends GameView {
         viewController.getSoundController().stopSound("title");
         viewController.getSoundController().loadSound("assets/sounds/battle.mp3","battle",true);
         viewController.getSoundController().playSound("battle");
-        background = new GIFDisplay("assets/images/background3.gif",0,0);
-        arrow = new GIFDisplay("assets/images/gameIcons/arrow.gif",100,200);
+        background = new GIFPainter("assets/images/background3.gif",0,0);
+        arrow = new GIFPainter("assets/images/gameIcons/arrow.gif",100,200);
         gameIcons = new GraphicalObject[5];
         cross = this.createImage("assets/images/gameIcons/redCross.png");
         gameIcons[0] = new GraphicalObject("assets/images/gameIconsText/sword.png");

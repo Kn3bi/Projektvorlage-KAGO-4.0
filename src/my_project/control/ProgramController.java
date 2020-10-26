@@ -20,7 +20,7 @@ public class ProgramController {
 
     // Referenzen
     private ViewController viewController;  // diese Referenz soll auf ein Objekt der Klasse viewController zeigen. Über dieses Objekt wird das Fenster gesteuert.
-    private NetworkController networkController;
+    private SSPNetworkController SSPNetworkController;
     private StartView startView;
     private PlayerSelectView playerSelectView;
     private PlayView playView;
@@ -47,7 +47,7 @@ public class ProgramController {
      * Diese Methode wird genau ein mal nach Programmstart aufgerufen. Achtung: funktioniert nicht im Szenario-Modus
      */
     public void startProgram() {
-        networkController = new NetworkController(this);
+        SSPNetworkController = new SSPNetworkController(this);
         while(targetPort < 1000 || targetPort > 65000) {
             try {
                 String m = JOptionPane.showInputDialog("Port für Spielserver (1000 bis 65000) eingeben:");
@@ -69,8 +69,8 @@ public class ProgramController {
      */
     public void updateProgram(double dt){
         if(state == State.SCANNING){
-            if (networkController.getServerIP() != null){
-                if (networkController.getServerIP().equals("timeout")){
+            if (SSPNetworkController.getServerIP() != null){
+                if (SSPNetworkController.getServerIP().equals("timeout")){
                     startView.displayTryAgain();
                     setState(State.TRYAGAIN);
                 } else {
@@ -88,24 +88,24 @@ public class ProgramController {
      */
     public void setState(State state){
         this.state = state;
-        if (state == State.SCANNING) networkController.startNetworkScan(targetPort);
+        if (state == State.SCANNING) SSPNetworkController.startNetworkScan(targetPort);
         if (state == State.PLAYERSELECT){
             startView.disposeView();
-            networkController.startConnection();
+            SSPNetworkController.startConnection();
             playerSelectView = new PlayerSelectView(viewController,this);
         }
         if (state == State.PLAYING){
             player = new Player(playerSelectView.getName());
             playerSelectView.disposeView();
             playView = new PlayView(viewController,this,playerSelectView.getPlayerIcons(),playerSelectView.getSelectedIconIndex(),player.getName(),player.getPunkte());
-            networkController.sendPlayerName(player);
+            SSPNetworkController.sendPlayerName(player);
        }
     }
 
     public void mouseClicked(MouseEvent e){}
 
     public void sendSelectionToServer(int selectedIndex){
-        networkController.sendPlayerChoice(convertNumberToLetter(selectedIndex));
+        SSPNetworkController.sendPlayerChoice(convertNumberToLetter(selectedIndex));
     }
 
     public void requestSelectionFromPlayer(){

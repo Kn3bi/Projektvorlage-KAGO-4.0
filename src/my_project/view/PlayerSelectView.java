@@ -3,6 +3,8 @@ package my_project.view;
 import KAGO_framework.control.ViewController;
 import KAGO_framework.model.GraphicalObject;
 import KAGO_framework.view.DrawTool;
+import KAGO_framework.view.ProgramView;
+import KAGO_framework.view.simple_gui.GIFPainter;
 import my_project.control.ProgramController;
 
 import javax.swing.*;
@@ -11,7 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class PlayerSelectView extends GameView {
+public class PlayerSelectView extends ProgramView {
 
     private int selectedIconIndex = 0;
     private boolean autoChangeName = true;
@@ -19,7 +21,7 @@ public class PlayerSelectView extends GameView {
 
     private BufferedImage[] playerIcons;
     private GraphicalObject change, start, waiting;
-    private GIFDisplay background;
+    private GIFPainter background;
 
     public PlayerSelectView(ViewController viewController, ProgramController programController){
         super(viewController,programController);
@@ -41,7 +43,7 @@ public class PlayerSelectView extends GameView {
         waiting = new GraphicalObject("assets/images/waiting.png");
         waiting.setX(300-start.getWidth()/2);
         waiting.setY(510);
-        background = new GIFDisplay("assets/images/background2.gif",0,0);
+        background = new GIFPainter("assets/images/background2.gif",0,0);
         viewController.getSoundController().loadSound("assets/sounds/speech/choosenow.mp3","choose",false);
         viewController.getSoundController().loadSound("assets/sounds/speech/rename.mp3","rename",false);
         viewController.getSoundController().playSound("choose");

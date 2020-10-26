@@ -1,4 +1,4 @@
-package my_project.view;
+package KAGO_framework.view.simple_gui;
 
 import KAGO_framework.model.GraphicalObject;
 import KAGO_framework.model.abitur.datenstrukturen.List;
@@ -6,12 +6,23 @@ import KAGO_framework.view.DrawTool;
 
 import javax.swing.*;
 
-public class GIFDisplay extends GraphicalObject {
+/**
+ * Dient zur Anzeige eines .gif-Bildes, das auch animiert sein kann.
+ * Das Objekt kann beliebig viele .gif-Dateien verwalten, die auf Wunsch jeweils
+ * gewechselt werden können.
+ */
+public class GIFPainter extends GraphicalObject {
 
     private List<ImageIcon> images;
     private int amount;
 
-    public GIFDisplay(String imagePath, double x, double y){
+    /**
+     * Erzeugt ein neues Objekt zur Anzeige eines GIF
+     * @param imagePath der relative Pfad zur Bilddatei
+     * @param x die x-Koordinate der oberen linken Ecke
+     * @param y die y-Koordinate der oberen linken Ecke
+     */
+    public GIFPainter(String imagePath, double x, double y){
         images = new List<>();
         addImage(imagePath);
         images.toFirst();
@@ -19,11 +30,19 @@ public class GIFDisplay extends GraphicalObject {
         this.y = y;
     }
 
+    /**
+     * Fügt den anzeigbaren Bildern des Objekts eines hinzu
+     * @param imagePath der Pfad zum zu ergänzenden GIF
+     */
     public void addImage(String imagePath){
         images.append(new ImageIcon(imagePath));
         amount++;
     }
 
+    /**
+     * Ändert die Anzeige auf ein anderes GIF des Objekts
+     * @param i der Index des GIFs
+     */
     public void setImageByIndex(int i){
         if(!images.isEmpty() && i <= amount){
             int current = 1;
