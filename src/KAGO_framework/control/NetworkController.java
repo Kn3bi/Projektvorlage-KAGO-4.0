@@ -8,13 +8,22 @@ import javax.swing.*;
 import java.io.IOException;
 import java.net.*;
 
+/**
+ * Der Network-Controller kann eine Verbindung zu einem Server herstellen. Dazu verwendet er die Abiturklasse Client.
+ * Er ist fähig in einem lokalen Netzwerk nach einem offenen Server zu suchen.
+ */
 public abstract class NetworkController{
 
     /**
      * Intere Unterklasse der Abiturklasse Client. Dient zum Verbindungsaufbau.
+     * Normalerweise wird die Verarbeitung von Servernachrichten direkt in dieser Klasse erledigt. Bei Verwendung
+     * des NetworkControllers ist es allerdings auch möglich die Methoden direkt in der implementierten Unterklasse
+     * des NetworkControllers zu schreiben.
+     * Für eine ausführliche Dokumentation, bitte die Klasse Client betrachten
      */
     private class NetworkClient extends Client {
 
+        // Referenzen
         private NetworkController networkController;
 
         public NetworkClient(String pServerIP, int pServerPort, NetworkController networkController) {
@@ -35,15 +44,21 @@ public abstract class NetworkController{
         }
     }
 
+    //Referenzen
     protected NetworkClient networkClient;
     protected ProgramController programController;
 
+    //Attribute
     protected String serverIP;
     protected int port;
     protected boolean isWorking;
     protected int maximumCycles;
     protected int currentCycle;
 
+    /**
+     * Erzeugt ein neues Objekt der Klasse NetworkController
+     * @param programController der zum Framework gehörende ProgramController
+     */
     public NetworkController(ProgramController programController){
         serverIP = null;
         isWorking = false;
@@ -150,13 +165,13 @@ public abstract class NetworkController{
      * Zu implementierende Methode, die Reaktionen auf Nachrichten vom Server bestimmt.
      * @param msg Die vom Server eingehende Nachricht als String
      */
-    public abstract void processServerRequest(String msg);
+    protected abstract void processServerRequest(String msg);
 
     /**
      * Methode zum Senden von Strings an den Server
      * @param msg die Nachricht, die an den Server gesendet werden soll.
      */
-    public void send(String msg){
+    protected void send(String msg){
         this.networkClient.send(msg);
     }
 

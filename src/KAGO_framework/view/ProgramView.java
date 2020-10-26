@@ -29,6 +29,7 @@ public abstract class ProgramView extends InteractiveGraphicalObject {
 
     /**
      * Entfernt die View aus der aktuellen DrawFrame.
+     * Achtung: eventuell über die GUI hinzugefügte Objekte werden nicht entfernt
      */
     public void disposeView(){
         viewController.removeDrawable(this);
