@@ -7,7 +7,7 @@ package my_project;
 public class Config {
 
     // Titel des Programms (steht oben in der Fenstertitelzeile)
-    public final static String WINDOW_TITLE = "SSP-Ultra-NeTwOrK-Version!";
+    public final static String WINDOW_TITLE = "Unbenanntes KAGO-4.0b-Projekt";
 
     // Breite des Programmfensters (Width) und Höhe des Programmfensters (Height)
     public final static int WINDOW_WIDTH = 600;
