@@ -59,7 +59,4 @@ public class ProgramController {
     public void mouseClicked(MouseEvent e){
 
     }
-
-
-
 }
