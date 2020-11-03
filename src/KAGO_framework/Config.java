@@ -9,7 +9,7 @@ package KAGO_framework;
 public class Config {
 
     // Frameworkversion
-    public final static String VERSION = "KNB-AOS-GraphicalObject-Java-Framework (light) - 3.4b - 02.10.2020";
+    public final static String VERSION = "KNB-AOS-GraphicalObject-Java-Framework - 4.0b - 03.11.2020";
     public final static String JAVA_SUPPORTED = "Java 11 + JavaFX";
 
     // Szenariomodus
