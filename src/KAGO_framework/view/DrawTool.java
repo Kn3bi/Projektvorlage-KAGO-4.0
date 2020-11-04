@@ -91,7 +91,7 @@ public class DrawTool {
     }
 
     /**
-     * aendert die aktuell verwendete Farbe zum Zeichnen auf eine andere Farbe.
+     * Aendert die aktuell verwendete Farbe zum Zeichnen auf eine andere Farbe.
      * Die aenderung gilt solange, bis eine neue Farbe gesetzt wird (Zustand)
      * @param r Der Gruen-Anteil der Farbe (0 bis 255)
      * @param g Der Gelb-Anteil der Farbe (0 bis 255)
@@ -99,7 +99,18 @@ public class DrawTool {
      * @param alpha Die Transparenz der Farbe, wobei 0 nicht sichtbar und 255 voll deckend ist
      */
     public void setCurrentColor(int r, int g, int b, int alpha){
-        if (graphics2D!= null) graphics2D.setColor( new Color(r,g,b,alpha));
+        if (graphics2D!= null) {
+            graphics2D.setColor( new Color(r,g,b,alpha) );
+        }
+    }
+
+    /**
+     * Aendert die aktuell verwendete Farbe zum Zeichnen auf eine andere Farbe.
+     * Die Änderung gilt solange, bis eine neue Farbe gesetzt wird.
+     * @param color Von außen festgelegtes Farb-Objekt
+     */
+    public void setCurrentColor(Color color){
+        if (graphics2D!= null) graphics2D.setColor( color );
     }
 
     /**
