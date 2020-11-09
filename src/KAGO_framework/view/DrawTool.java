@@ -110,7 +110,7 @@ public class DrawTool {
      * @param color Von außen festgelegtes Farb-Objekt
      */
     public void setCurrentColor(Color color){
-        if (graphics2D!= null) graphics2D.setColor( color );
+        if (graphics2D!= null && color != null) graphics2D.setColor( color );
     }
 
     /**
