@@ -25,8 +25,8 @@ public class ProgramController {
      * der Klasse viewController. Diese wird als Parameter übergeben.
      * @param ViewController das viewController-Objekt des Programms
      */
-    public ProgramController(ViewController ViewController){
-        this.viewController = ViewController;
+    public ProgramController(ViewController viewController){
+        this.viewController = viewController;
     }
 
     /**
