@@ -10,7 +10,7 @@ package KAGO_framework.model.abitur.datenbanken.mysql;
  * <p>
  * Ein Objekt der Klasse QueryResult stellt die Ergebnistabelle einer Datenbankanfrage mit Hilfe 
  * der Klasse DatabaseConnector dar. Objekte dieser Klasse werden nur von der Klasse DatabaseConnector erstellt. 
- * Die Klasse verfuegt ueber keinen oeffentlichen Konstruktor.
+ * Die Klasse verfuegt ueber keinen oeffentlichen Konstruktor. (GEÄNDERT FÜR FRAMEWORK-KOMPATIBILITÄT)
  * </p>
  * 
  * @author Qualitaets- und UnterstuetzungsAgentur - Landesinstitut fuer Schule
@@ -24,7 +24,7 @@ public class QueryResult{
   /**
    * Paketinterner Konstruktor.
    */
-  QueryResult(String[][] pData, String[] pColumnNames, String[] pColumnTypes){
+  public QueryResult(String[][] pData, String[] pColumnNames, String[] pColumnTypes){
     data = pData;
     columnNames = pColumnNames;   
     columnTypes = pColumnTypes;
