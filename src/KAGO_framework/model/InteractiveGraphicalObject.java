@@ -7,24 +7,38 @@ import java.awt.event.MouseEvent;
 public abstract class InteractiveGraphicalObject extends GraphicalObject implements Interactable {
 
     @Override
-    public abstract void keyPressed(int key);
+    public void keyPressed(int key){
+
+    }
 
     @Override
-    public abstract void keyReleased(int key);
+    public void keyReleased(int key){
+
+    }
 
     @Override
-    public abstract void mouseReleased(MouseEvent e);
+    public void mouseReleased(MouseEvent e){
+
+    }
 
     @Override
-    public abstract void mouseClicked(MouseEvent e);
+    public void mouseClicked(MouseEvent e){
+
+    }
 
     @Override
-    public abstract void mouseDragged(MouseEvent e);
+    public void mouseDragged(MouseEvent e){
+
+    }
 
     @Override
-    public abstract void mouseMoved(MouseEvent e);
+    public void mouseMoved(MouseEvent e){
+
+    }
 
     @Override
-    public abstract void mousePressed(MouseEvent e);
+    public void mousePressed(MouseEvent e){
+
+    }
 
 }
