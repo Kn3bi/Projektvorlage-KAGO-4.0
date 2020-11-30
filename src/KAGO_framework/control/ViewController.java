@@ -172,7 +172,9 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void draw(Drawable d, int sceneIndex){
         if ( sceneIndex < scenes.size() && d != null){
-            scenes.get(sceneIndex).drawables.add(d);
+            SwingUtilities.invokeLater(() -> {
+                scenes.get(sceneIndex).drawables.add(d);
+            });
         }
     }
 
@@ -181,9 +183,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param d Das zu zeichnende Objekt.
      */
     public void draw(Drawable d){
-        if ( d != null){
-            scenes.get(currentScene).drawables.add(d);
-        }
+        draw(d,currentScene);
     }
 
     /**
@@ -192,9 +192,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param i das gewünschte Objekt
      */
     public void register(Interactable i){
-        if (i!=null){
-            scenes.get(currentScene).interactables.add(i);
-        }
+        register(i, currentScene);
     }
 
     /**
@@ -204,7 +202,9 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void register(Interactable i, int sceneIndex){
         if (sceneIndex < scenes.size() && i!=null){
-            scenes.get(sceneIndex).interactables.add(i);
+            SwingUtilities.invokeLater(() -> {
+                scenes.get(sceneIndex).interactables.add(i);
+            });
         }
     }
 
@@ -214,13 +214,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param d Das zu entfernende Objekt.
      */
     public void removeDrawable(Drawable d){
-        if (d != null){
-            notChangingDrawables = false;
-            SwingUtilities.invokeLater(() -> {
-                scenes.get(currentScene).drawables.remove(d);
-                notChangingDrawables = true;
-            });
-        }
+        removeDrawable(d,currentScene);
     }
 
     /**
@@ -245,13 +239,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param i Das zu entfernende Objekt.
      */
     public void removeInteractable(Interactable i){
-        if (i != null){
-            notChangingInteractables = false;
-            SwingUtilities.invokeLater(() -> {
-                scenes.get(currentScene).interactables.remove(i);
-                notChangingInteractables = true;
-            });
-        }
+        removeInteractable(i,currentScene);
     }
 
     /**
