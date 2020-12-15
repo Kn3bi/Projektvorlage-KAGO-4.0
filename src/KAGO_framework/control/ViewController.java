@@ -42,7 +42,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
 
     // Referenzen
     private DrawFrame drawFrame;    // das Fenster des Programms
-    private ProgramController gameController; // das Objekt, das das Programm steuern soll
+    private ProgramController programController; // das Objekt, das das Programm steuern soll
     private Timer gameProcess;
     private ArrayList<Integer> currentlyPressedKeys;
     private ArrayList<Scene> scenes;
@@ -68,8 +68,8 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
         // Setzt die Ziel-Zeit zwischen zwei aufeinander folgenden Frames in Millisekunden
         dt = 35; //Vernuenftiger Startwert
         if ( Config.INFO_MESSAGES) System.out.println("  > ViewController: Erzeuge ProgramController und starte Spielprozess (Min. dt = "+dt+"ms)...");
-        if ( Config.INFO_MESSAGES) System.out.println("     > Es wird nun einmalig die Methode startProgram von dem ProgramController-Objekt aufgerufen. (außer im Szenario-Modus!)");
-        if ( Config.INFO_MESSAGES) System.out.println("     > Es wird wiederholend die Methode updateProgram von dem ProgramController-Objekt aufgerufen..");
+        if ( Config.INFO_MESSAGES) System.out.println("     > Es wird nun einmalig die Methode startProgram von dem ProgramController-Objekt aufgerufen.");
+        if ( Config.INFO_MESSAGES) System.out.println("     > Es wird wiederholend die Methode updateProgram von dem ProgramController-Objekt aufgerufen.");
         if ( Config.INFO_MESSAGES) System.out.println("-------------------------------------------------------------------------------------------------\n");
         if ( Config.INFO_MESSAGES) System.out.println("** Ab hier folgt das Log zum laufenden Programm: **");
         if(my_project.Config.useSound){
@@ -89,8 +89,8 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * Startet das Programm, nachdem Vorarbeiten abgeschlossen sind.
      */
     private void startProgram(){
-        gameController = new ProgramController(this);
-        gameController.startProgram();
+        programController = new ProgramController(this);
+        programController.startProgram();
         // Starte nebenlaeufigen Prozess, der Zeichnen und Animation uebernimmt
         lastLoop = System.nanoTime();
         gameProcess = new Timer(dt, this);
@@ -172,9 +172,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void draw(Drawable d, int sceneIndex){
         if ( sceneIndex < scenes.size() && d != null){
-            SwingUtilities.invokeLater(() -> {
-                scenes.get(sceneIndex).drawables.add(d);
-            });
+            SwingUtilities.invokeLater(() -> scenes.get(sceneIndex).drawables.add(d));
         }
     }
 
@@ -202,9 +200,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void register(Interactable i, int sceneIndex){
         if (sceneIndex < scenes.size() && i!=null){
-            SwingUtilities.invokeLater(() -> {
-                scenes.get(sceneIndex).interactables.add(i);
-            });
+            SwingUtilities.invokeLater(() -> scenes.get(sceneIndex).interactables.add(i));
         }
     }
 
@@ -273,7 +269,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
         double dtSeconds = (double)dt/1000;
         if ( dtSeconds == 0 ) dtSeconds = 0.01;
         // Führe Berechnungen und Aktualisierungen im Hauptobjekt aus
-        gameController.updateProgram(dtSeconds);
+        programController.updateProgram(dtSeconds);
         // Zeichne alle Objekte der aktuellen Szene
         scenes.get(currentScene).drawingPanel.repaint();
         // Aktualisiere SoundController, wenn vorhanden
@@ -348,7 +344,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        gameController.mouseClicked(e);
+        programController.mouseClicked(e);
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
         while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
