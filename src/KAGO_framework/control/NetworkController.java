@@ -60,6 +60,7 @@ public abstract class NetworkController{
      * @param programController der zum Framework gehörende ProgramController
      */
     public NetworkController(ProgramController programController){
+        port = -1;
         serverIP = null;
         isWorking = false;
         maximumCycles = 20; // Anzahl der Suchdurchläufe
@@ -80,7 +81,7 @@ public abstract class NetworkController{
             currentCycle = 0;
             new SwingWorker() {
                 @Override
-                protected Object doInBackground() throws Exception {
+                protected Object doInBackground() {
                     while (serverIP == null && currentCycle < maximumCycles) {
                         currentCycle++;
                         serverIP = scanForServerIP(port);
@@ -152,14 +153,40 @@ public abstract class NetworkController{
     }
 
     /**
-     * Erstellt einen neuen Client, der sich mit dem Server verbindet.
+     * Erstellt einen neuen Client, der sich mit dem Server verbindet. Dafür müssen die nötigen Daten
+     * (IP und Port) vorliegen.
      */
     public void startConnection(){
         if(serverIP != null && !serverIP.equals("timeout")){
-            System.out.println("NetworkController: Trying to connect to: "+serverIP+" on "+port);
+            System.out.println("[#]<~~?~~>[#] NetworkController: Trying to connect to: "+serverIP+" on "+port);
             networkClient = new NetworkClient(serverIP,port,this);
         }
     }
+
+    /**
+     * Verwendet den beim Scan verwendeten Port und die angegebene IP
+     * für einen sortigen Verbindungsversuch.
+     * @param ip IP des Zielsystems
+     */
+    public void startConnection(String ip){
+        if (port != -1){
+            this.serverIP = ip;
+            startConnection();
+        }
+    }
+
+    /**
+     * Versucht sofort eine Verbindung zum Zielsystem herzustellen.
+     * @param ip IP des Zielsystems.
+     * @param port Port der Serveranwendung auf dem Zielsystem.
+     */
+    public void startConnection(String ip, int port){
+        this.serverIP = ip;
+        this.port = port;
+        startConnection();
+    }
+
+
 
     /**
      * Zu implementierende Methode, die Reaktionen auf Nachrichten vom Server bestimmt.
