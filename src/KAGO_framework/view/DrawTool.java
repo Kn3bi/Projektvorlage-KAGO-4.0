@@ -2,10 +2,7 @@ package KAGO_framework.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Line2D;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -50,7 +47,7 @@ public class DrawTool {
                     transform.translate(-bI.getWidth()*(scale-1)*0.25, -bI.getHeight()*(scale-1)*0.25);
                 }
             }
-            transform.rotate( Math.toRadians(degrees), bI.getWidth()/2, bI.getHeight()/2 );
+            transform.rotate( Math.toRadians(degrees), bI.getWidth()/ (double) 2, bI.getHeight()/ (double) 2 );
             graphics2D.drawImage(bI, transform, null);
         }
     }
@@ -76,6 +73,18 @@ public class DrawTool {
     public void drawRectangle(double x, double y, double width, double height){
         Rectangle2D.Double r = new Rectangle2D.Double(x,y,width,height);
         if (graphics2D!= null) graphics2D.draw(r);
+    }
+
+    /**
+     * Zeichnet ein Quadrat als Linie ohne Fuellung
+     * Credit: Nils Derenthal
+     * @param x Die x-Koordinate der oberen linken Ecke
+     * @param y Die y-Koordinate der oberen linken Ecke
+     * @param sideLength die Länge einer Seite des Quadrats
+     */
+    public void drawRectangle(double x, double y, double sideLength){
+        drawRectangle(x,y,sideLength,sideLength);
+
     }
 
     /**
@@ -111,6 +120,19 @@ public class DrawTool {
      */
     public void setCurrentColor(Color color){
         if (graphics2D!= null && color != null) graphics2D.setColor( color );
+    }
+
+    /**
+     * Aendert die aktuell verwendete Farbe zum Zeichnen auf eine andere Farbe.
+     * Die aenderung gilt solange, bis eine neue Farbe gesetzt wird (Zustand)
+     * Credit: Nils Derenthal
+     * @param h Der Farbton, dargestellt in einem Farbring in Grad (0-360)
+     *         -> https://crosstownarts.org/wp-content/uploads/2019/11/colour-wheel-1740381_1920-1200x1200.jpg
+     * @param s Die Sättigung der Farbe in Prozent (0-100)
+     * @param b Die Helligkeit der Farbe in Prozent (0-100)
+     */
+    public void setCurrentHSBColor(float h, float s, float b){
+        if (graphics2D!= null) graphics2D.setColor( Color.getHSBColor(h,s,b));
     }
 
     /**
@@ -179,6 +201,102 @@ public class DrawTool {
     public void drawLine(double x1, double y1, double x2, double y2){
         Line2D.Double line = new Line2D.Double(x1,y1,x2,y2);
         if (graphics2D!= null) graphics2D.draw(line);
+    }
+
+    /**
+     * Zeichnet eine Ellipse ohne Fuellung als Linie
+     * Credit: Nils Derenthal
+     * @param x Die x-Koordinate des Mittelpunkts in X-Richtung
+     * @param y Die y-Koordinate des Mittelpunkts in Y-Richtung
+     * @param radiusX Der Kreisradius in X-Richtung
+     * @param radiusY Der KreisRadius in Y-Richtung
+     */
+    public void drawEllipse (double x, double y, double radiusX, double radiusY){
+        Ellipse2D.Double e = new Ellipse2D.Double(x-radiusX,y-radiusY,radiusX*2,radiusY*2);
+        if (graphics2D!= null) graphics2D.draw(e);
+    }
+
+    /**
+     * Zeichnet eine gefuellte Ellipse
+     * Credit: Nils Derenthal
+     * @param x Die x-Koordinate des Mittelpunkts in X-Richtung
+     * @param y Die y-Koordinate des Mittelpunkts in Y-Richtung
+     * @param radiusX Der Kreisradius in X-Richtung
+     * @param radiusY Der KreisRadius in Y-Richtung
+     */
+    public void drawFilledEllipse (double x, double y, double radiusX, double radiusY){
+        Ellipse2D.Double e = new Ellipse2D.Double(x-radiusX,y-radiusY,radiusX*2,radiusY*2);
+        if (graphics2D!= null) graphics2D.fill(e);
+    }
+
+    /**
+     * Zeichnet einen Kreisausschnitt als Linie ohne Füllung
+     * Credit: Nils Derenthal
+     * @param x Die X-Koordinate des Mittelpunktes des Kreisausschnitts
+     * @param y Die Y-Koordinate des Mittelpunktes des Kreisausschnitts
+     * @param radius Der Radius des Kreisausschnittes
+     * @param startingAngle Der Anfangswinkel des Kreisausschnitts (0° entspricht dem rechtesten Punkt des Kreises)
+     * @param endingAngle Der Endwinkel des Kreisauschnitts
+     * @param type Der Typ des Kreisausschnitt.
+     * -> 0 entspricht offen, 1 entspricht einer Linie zwischen den beiden Winkeln, 2 entspricht Linien zwischen dem Mittelpunkt und den Winkeln
+     */
+    public void drawArc(double x, double y, double radius, double startingAngle, double endingAngle, int type){
+        if (type > 2)  throw new IllegalArgumentException("must be in a 0 - 2 scope");
+        Arc2D.Double arc = new Arc2D.Double(x,y,radius,radius,startingAngle,endingAngle,type);
+        if (graphics2D!= null) graphics2D.draw(arc);
+    }
+
+    /**
+     * Zeichnet einen gefuellten Kreisausschnitt
+     * Credit: Nils Derenthal
+     * @param x Die X-Koordinate des Mittelpunktes des Kreisausschnitts
+     * @param y Die Y-Koordinate des Mittelpunktes des Kreisausschnitts
+     * @param radius Der Radius des Kreisausschnittes
+     * @param startingAngle Der Anfangswinkel des Kreisausschnitts (0° entspricht dem rechtesten Punkt des Kreises)
+     * @param endingAngle Der Endwinkel des Kreisauschnitts
+     * @param type Der Typ des Kreisausschnitt.
+     * -> 0 entspricht offen, 1 entspricht einer Linie zwischen den beiden Winkeln, 2 entspricht Linien zwischen dem Mittelpunkt und den Winkeln
+     */
+    public void drawFilledArc(double x, double y, double radius, double startingAngle, double endingAngle, int type){
+        if (type > 2)  throw new IllegalArgumentException("must be in a 0 - 2 scope");
+        Arc2D.Double arc = new Arc2D.Double(x,y,radius,radius,startingAngle,endingAngle,type);
+        if (graphics2D!= null) graphics2D.fill(arc);
+    }
+
+    /**
+     * Zeichnet einen Kreisausschnitt als Linie ohne Füllung
+     * Credit: Nils Derenthal
+     * @param x Die X-Koordinate des Mittelpunktes des Kreisausschnitts
+     * @param y Die Y-Koordinate des Mittelpunktes des Kreisausschnitts
+     * @param radiusX Der Radius des Kreisausschnittes in X-Richtung
+     * @param radiusY Der Radius des Kreisausschnittes in Y-Richtung
+     * @param startingAngle Der Anfangswinkel des Kreisausschnitts (0° entspricht dem rechtesten Punkt des Kreises)
+     * @param endingAngle Der Endwinkel des Kreisauschnitts
+     * @param type Der Typ des Kreisausschnitt.
+     * -> 0 entspricht offen, 1 entspricht einer Linie zwischen den beiden Winkeln, 2 entspricht Linien zwischen dem Mittelpunkt und den Winkeln
+     */
+    public void drawEllipticArc(double x, double y, double radiusX, double radiusY, double startingAngle, double endingAngle, int type){
+        if (type > 2)  throw new IllegalArgumentException("must be in a 0 - 2 scope");
+        Arc2D.Double arc = new Arc2D.Double(x,y,radiusX,radiusY,startingAngle,endingAngle,type);
+        if (graphics2D!= null) graphics2D.draw(arc);
+    }
+
+    /**
+     * Zeichnet einen gefuellten Kreisausschnitt
+     * Credit: Nils Derenthal
+     * @param x Die X-Koordinate des Mittelpunktes des Kreisausschnitts
+     * @param y Die Y-Koordinate des Mittelpunktes des Kreisausschnitts
+     * @param radiusX Der Radius des Kreisausschnittes in X-Richtung
+     * @param radiusY Der Radius des Kreisausschnittes in Y-Richtung
+     * @param startingAngle Der Anfangswinkel des Kreisausschnitts (0° entspricht dem rechtesten Punkt des Kreises)
+     * @param endingAngle Der Endwinkel des Kreisauschnitts
+     * @param type Der Typ des Kreisausschnitt.
+     * -> 0 entspricht offen, 1 entspricht einer Linie zwischen den beiden Winkeln, 2 entspricht Linien zwischen dem Mittelpunkt und den Winkeln
+     */
+    public void drawFilledEllipticArc(double x, double y, double radiusX, double radiusY, double startingAngle, double endingAngle, int type){
+        if (type > 2)  throw new IllegalArgumentException("must be in a 0 - 2 scope");
+        Arc2D.Double arc = new Arc2D.Double(x,y,radiusX,radiusY,startingAngle,endingAngle,type);
+        if (graphics2D!= null) graphics2D.fill(arc);
     }
 
     /**
