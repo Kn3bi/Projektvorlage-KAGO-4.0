@@ -120,10 +120,14 @@ public class GraphicalObject implements Drawable {
             if(gO.getRadius() == 0){
                 if ( x < gO.getX()+gO.getWidth() && x + width > gO.getX() && y < gO.getY() + gO.getHeight() && y + height > gO.getY() ) return true;
             }else{
-                if ( x < gO.getX()+gO.getRadius() && x + width > gO.getX()+gO.getRadius() && y < gO.getY() + gO.getRadius() && y + height > gO.getY() + getRadius() ) return true;
+                if ( x < gO.getX()+2*gO.getRadius() && x + width > gO.getX() && y < gO.getY() + 2*gO.getRadius() && y + height > gO.getY() ) return true;
             }
         }else{
-            if(getDistanceTo(gO)<radius+gO.getRadius()) return true;
+            if(gO.getRadius() == 0){
+                if ( gO.getX() < x+2*radius && gO.getX() + gO.getWidth() > x && gO.getY() < y + 2*radius && gO.getY() + gO.getHeight() > y ) return true;
+            }else{
+                if(getDistanceTo(gO)<=radius+gO.getRadius()) return true;
+            }
         }
 
         return false;
@@ -155,10 +159,24 @@ public class GraphicalObject implements Drawable {
      */
     public double getDistanceTo(GraphicalObject gO){
         // Berechne die Mittelpunkte der Objekte
-        double midX = x + width/2;
-        double midY = y + height/2;
-        double midX2 = gO.getX() + gO.getWidth()/2;
-        double midY2 = gO.getY() + gO.getHeight()/2;
+        double midX, midY;
+        if(radius == 0){
+            midX = x + width/2;
+            midY = y + height/2;
+        }else{
+            midX = x + radius;
+            midY = y+ radius;
+        }
+
+        double midX2, midY2;
+        if(gO.getRadius() == 0){
+            midX2 = gO.getX() + gO.getWidth()/2;
+            midY2 = gO.getY() + gO.getHeight()/2;
+        }else{
+            midX2 = gO.getX() + gO.getRadius();
+            midY2 = gO.getY() + gO.getRadius();
+        }
+
         // Berechne die Distanz zwischen den Punkten mit dem Satz des Pythagoras
         return Math.sqrt( Math.pow(midX-midX2, 2) + Math.pow(midY-midY2,2));
     }
