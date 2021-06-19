@@ -28,11 +28,11 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     private class Scene {
 
-        public DrawingPanel drawingPanel;
-        public ArrayList<Drawable> drawables;
-        public ArrayList<Interactable> interactables;
+        DrawingPanel drawingPanel;
+        ArrayList<Drawable> drawables;
+        ArrayList<Interactable> interactables;
 
-        public Scene(ViewController viewController){
+        Scene(ViewController viewController){
             drawingPanel = new DrawingPanel(viewController);
             drawingPanel.setBackground(new Color(255,255,255));
             drawables = new ArrayList<>();
@@ -42,7 +42,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
 
     // Referenzen
     private DrawFrame drawFrame;    // das Fenster des Programms
-    private ProgramController gameController; // das Objekt, das das Programm steuern soll
+    private ProgramController programController; // das Objekt, das das Programm steuern soll
     private Timer gameProcess;
     private ArrayList<Integer> currentlyPressedKeys;
     private ArrayList<Scene> scenes;
@@ -58,7 +58,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     /**
      * Erzeugt ein Objekt zur Kontrolle des Programmflusses.
      */
-    public ViewController(){
+    ViewController(){
         notChangingDrawables = true;
         notChangingInteractables = true;
         scenes = new ArrayList<>();
@@ -68,14 +68,19 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
         // Setzt die Ziel-Zeit zwischen zwei aufeinander folgenden Frames in Millisekunden
         dt = 35; //Vernuenftiger Startwert
         if ( Config.INFO_MESSAGES) System.out.println("  > ViewController: Erzeuge ProgramController und starte Spielprozess (Min. dt = "+dt+"ms)...");
-        if ( Config.INFO_MESSAGES) System.out.println("     > Es wird nun einmalig die Methode startProgram von dem ProgramController-Objekt aufgerufen. (außer im Szenario-Modus!)");
-        if ( Config.INFO_MESSAGES) System.out.println("     > Es wird wiederholend die Methode updateProgram von dem ProgramController-Objekt aufgerufen..");
+        if ( Config.INFO_MESSAGES) System.out.println("     > Es wird nun einmalig die Methode startProgram von dem ProgramController-Objekt aufgerufen.");
+        if ( Config.INFO_MESSAGES) System.out.println("     > Es wird wiederholend die Methode updateProgram von dem ProgramController-Objekt aufgerufen.");
         if ( Config.INFO_MESSAGES) System.out.println("-------------------------------------------------------------------------------------------------\n");
         if ( Config.INFO_MESSAGES) System.out.println("** Ab hier folgt das Log zum laufenden Programm: **");
         if(my_project.Config.useSound){
             soundController = new SoundController();
         } else {
             if ( Config.INFO_MESSAGES) System.out.println("** Achtung! Sound deaktiviert => soundController ist NULL (kann in Config geändert werden). **");
+        }
+
+        if (!my_project.Config.SHOW_DEFAULT_WINDOW){
+            setDrawFrameVisible(false);
+            if(Config.INFO_MESSAGES) System.out.println("** Achtung! Standardfenster deaktiviert => wird nicht angezeigt.). **");
         }
         startProgram();
     }
@@ -84,8 +89,8 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * Startet das Programm, nachdem Vorarbeiten abgeschlossen sind.
      */
     private void startProgram(){
-        gameController = new ProgramController(this);
-        gameController.startProgram();
+        programController = new ProgramController(this);
+        programController.startProgram();
         // Starte nebenlaeufigen Prozess, der Zeichnen und Animation uebernimmt
         lastLoop = System.nanoTime();
         gameProcess = new Timer(dt, this);
@@ -167,7 +172,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void draw(Drawable d, int sceneIndex){
         if ( sceneIndex < scenes.size() && d != null){
-            scenes.get(sceneIndex).drawables.add(d);
+            SwingUtilities.invokeLater(() -> scenes.get(sceneIndex).drawables.add(d));
         }
     }
 
@@ -176,9 +181,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param d Das zu zeichnende Objekt.
      */
     public void draw(Drawable d){
-        if ( d != null){
-            scenes.get(currentScene).drawables.add(d);
-        }
+        draw(d,currentScene);
     }
 
     /**
@@ -187,9 +190,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param i das gewünschte Objekt
      */
     public void register(Interactable i){
-        if (i!=null){
-            scenes.get(currentScene).interactables.add(i);
-        }
+        register(i, currentScene);
     }
 
     /**
@@ -199,7 +200,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public void register(Interactable i, int sceneIndex){
         if (sceneIndex < scenes.size() && i!=null){
-            scenes.get(sceneIndex).interactables.add(i);
+            SwingUtilities.invokeLater(() -> scenes.get(sceneIndex).interactables.add(i));
         }
     }
 
@@ -209,13 +210,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param d Das zu entfernende Objekt.
      */
     public void removeDrawable(Drawable d){
-        if (d != null){
-            notChangingDrawables = false;
-            SwingUtilities.invokeLater(() -> {
-                scenes.get(currentScene).drawables.remove(d);
-                notChangingDrawables = true;
-            });
-        }
+        removeDrawable(d,currentScene);
     }
 
     /**
@@ -240,13 +235,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @param i Das zu entfernende Objekt.
      */
     public void removeInteractable(Interactable i){
-        if (i != null){
-            notChangingInteractables = false;
-            SwingUtilities.invokeLater(() -> {
-                scenes.get(currentScene).interactables.remove(i);
-                notChangingInteractables = true;
-            });
-        }
+        removeInteractable(i,currentScene);
     }
 
     /**
@@ -280,7 +269,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
         double dtSeconds = (double)dt/1000;
         if ( dtSeconds == 0 ) dtSeconds = 0.01;
         // Führe Berechnungen und Aktualisierungen im Hauptobjekt aus
-        gameController.updateProgram(dtSeconds);
+        programController.updateProgram(dtSeconds);
         // Zeichne alle Objekte der aktuellen Szene
         scenes.get(currentScene).drawingPanel.repaint();
         // Aktualisiere SoundController, wenn vorhanden
@@ -290,7 +279,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
     /**
      * Diese Methode wird vom aktuellen DrawingPanel aufgerufen, sobald es bereit ist, alle Objekte
      * in das Fenster zu zeichnen. Dieser Vorgang wird schnellstmöglich wiederholt.
-     * @param drawTool
+     * @param drawTool das zur Verfügung gestellte DrawTool des Fensters
      */
     public void drawAndUpdateObjects(DrawTool drawTool){
         elapsedTime_Drawables = System.nanoTime() - lastLoop_Drawables;
@@ -313,8 +302,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      * @return True, falls die entsprechende Taste momentan gedrückt ist, andernfalls false.
      */
     public boolean isKeyDown(int key){
-        if (currentlyPressedKeys.contains(key)) return true;
-        return false;
+        return currentlyPressedKeys.contains(key);
     }
 
     /**
@@ -323,6 +311,14 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
      */
     public DrawFrame getDrawFrame(){
         return this.drawFrame;
+    }
+
+    /**
+     * Zeigt das Standardfenster an oder versteckt es.
+     * @param b der gewünschte Sichtbarkeitsstatus
+     */
+    public void setDrawFrameVisible(boolean b){
+        drawFrame.setVisible(b);
     }
 
     /* INTERFACE METHODEN */
@@ -348,7 +344,7 @@ public class ViewController implements ActionListener, KeyListener, MouseListene
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        gameController.mouseClicked(e);
+        programController.mouseClicked(e);
         Iterator<Interactable> iterator = scenes.get(currentScene).interactables.iterator();
         while (iterator.hasNext() && notChangingInteractables){
             Interactable tmpInteractable = iterator.next();
