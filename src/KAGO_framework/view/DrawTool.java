@@ -167,11 +167,7 @@ public class DrawTool {
      * @param y3 Die y-Koordinate der dritten Ecke
      */
     public void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3 ){
-        Polygon p = new Polygon();
-        p.addPoint((int)x1,(int)y1);
-        p.addPoint((int)x2,(int)y2);
-        p.addPoint((int)x3,(int)y3);
-        if (graphics2D!= null) graphics2D.draw(p);
+        drawPolygon(x1,y1,x2,y2,x3,y3);
     }
 
     /**
@@ -184,11 +180,7 @@ public class DrawTool {
      * @param y3 Die y-Koordinate der dritten Ecke
      */
     public void drawFilledTriangle(double x1, double y1, double x2, double y2, double x3, double y3 ){
-        Polygon p = new Polygon();
-        p.addPoint((int)x1,(int)y1);
-        p.addPoint((int)x2,(int)y2);
-        p.addPoint((int)x3,(int)y3);
-        if (graphics2D!= null) graphics2D.fill(p);
+        drawFilledPolygon(x1,y1,x2,y2,x3,y3);
     }
 
     /**
