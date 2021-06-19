@@ -61,7 +61,7 @@ public class DrawTool {
      * @param size die gewünschte Breite in Pixeln
      */
     public void setLineWidth(int size){
-        if (graphics2D!= null){
+        if (graphics2D != null){
             graphics2D.setStroke(new BasicStroke(size));
         }
     }
@@ -75,7 +75,7 @@ public class DrawTool {
      */
     public void drawRectangle(double x, double y, double width, double height){
         Rectangle2D.Double r = new Rectangle2D.Double(x,y,width,height);
-        if (graphics2D!= null) graphics2D.draw(r);
+        if (graphics2D != null) graphics2D.draw(r);
     }
 
     /**
@@ -87,7 +87,7 @@ public class DrawTool {
      */
     public void drawFilledRectangle(double x, double y, double width, double height){
         Rectangle2D.Double r = new Rectangle2D.Double(x,y,width,height);
-        if (graphics2D!= null) graphics2D.fill(r);
+        if (graphics2D != null) graphics2D.fill(r);
     }
 
     /**
@@ -99,7 +99,7 @@ public class DrawTool {
      * @param alpha Die Transparenz der Farbe, wobei 0 nicht sichtbar und 255 voll deckend ist
      */
     public void setCurrentColor(int r, int g, int b, int alpha){
-        if (graphics2D!= null) graphics2D.setColor( new Color(r,g,b,alpha));
+        if (graphics2D != null) graphics2D.setColor( new Color(r,g,b,alpha));
     }
 
     /**
@@ -110,7 +110,7 @@ public class DrawTool {
      */
     public void drawCircle(double x, double y, double radius){
         Ellipse2D.Double e = new Ellipse2D.Double(x-radius,y-radius,radius*2,radius*2);
-        if (graphics2D!= null) graphics2D.draw(e);
+        if (graphics2D != null) graphics2D.draw(e);
     }
 
     /**
@@ -121,7 +121,7 @@ public class DrawTool {
      */
     public void drawFilledCircle(double x, double y, double radius){
         Ellipse2D.Double e = new Ellipse2D.Double(x-radius,y-radius,radius*2,radius*2);
-        if (graphics2D!= null) graphics2D.fill(e);
+        if (graphics2D != null) graphics2D.fill(e);
     }
 
     /**
@@ -138,7 +138,7 @@ public class DrawTool {
         p.addPoint((int)x1,(int)y1);
         p.addPoint((int)x2,(int)y2);
         p.addPoint((int)x3,(int)y3);
-        if (graphics2D!= null) graphics2D.draw(p);
+        if (graphics2D != null) graphics2D.draw(p);
     }
 
     /**
@@ -155,7 +155,7 @@ public class DrawTool {
         p.addPoint((int)x1,(int)y1);
         p.addPoint((int)x2,(int)y2);
         p.addPoint((int)x3,(int)y3);
-        if (graphics2D!= null) graphics2D.fill(p);
+        if (graphics2D != null) graphics2D.fill(p);
     }
 
     /**
@@ -167,7 +167,7 @@ public class DrawTool {
      */
     public void drawLine(double x1, double y1, double x2, double y2){
         Line2D.Double line = new Line2D.Double(x1,y1,x2,y2);
-        if (graphics2D!= null) graphics2D.draw(line);
+        if (graphics2D != null) graphics2D.draw(line);
     }
 
     /**
@@ -177,7 +177,7 @@ public class DrawTool {
      * @param text Der anzuzeigende Text
      */
     public void drawText(double x, double y, String text){
-        if (graphics2D!=null) graphics2D.drawString(text,(int)x,(int)y);
+        if (graphics2D != null) graphics2D.drawString(text,(int)x,(int)y);
     }
 
     /**
