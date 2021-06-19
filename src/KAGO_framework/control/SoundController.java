@@ -57,19 +57,17 @@ public class SoundController {
         loadedSounds = new ArrayList<>();
         playingQueue = new Queue<>();
         try {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    try {
-                        System.out.println("Instanziiere JFXPanel für Tonwiedergabe...");
-                        new JFXPanel(); // initializes JavaFX environment
-                        initialized = true;
-                    } catch (Exception e) {
-                        System.out.println("Sound-Initialsierung final fehlgeschlagen (JFX-Panel). Vermutlich nicht unterstützte Java-Version (Java 9 verwenden).");
-                    }
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    if ( Config.INFO_MESSAGES) System.out.println("Instanziiere JFXPanel für Tonwiedergabe...");
+                    new JFXPanel(); // initializes JavaFX environment
+                    initialized = true;
+                } catch (Exception e) {
+                    if ( Config.INFO_MESSAGES) System.out.println("Sound-Initialsierung final fehlgeschlagen (JFX-Panel). Vermutlich nicht unterstützte Java-Version (Java 9 verwenden).");
                 }
             });
         } catch (Exception e) {
-            System.out.println("Sound-Initalisierung partiell fehlgeschlagen. Vermutlich nicht unterstützte Java-Version.");
+            if ( Config.INFO_MESSAGES) System.out.println("Sound-Initalisierung partiell fehlgeschlagen. Vermutlich nicht unterstützte Java-Version.");
             e.printStackTrace();
         }
     }
@@ -83,7 +81,7 @@ public class SoundController {
             if (soundDelay > 0) soundDelay -= dt;
             if(!started){
                 started = true;
-                System.out.println("SoundController hat Arbeit aufgenommen.");
+                if ( Config.INFO_MESSAGES) System.out.println("SoundController hat Arbeit aufgenommen.");
             }
             if(soundDelay <= 0) {
                 Iterator<SoundData> iterator = soundsToLoad.iterator();
@@ -170,6 +168,7 @@ public class SoundController {
                 Sound currentSound = iterator.next();
                 if (currentSound.getName().equals(name)) {
                     currentSound.stop();
+                    searching = false;
                 }
             }
         }
@@ -181,13 +180,8 @@ public class SoundController {
      * @return true, falls der Sound gerade abgespielt wird, sonst false
      */
     public boolean isPlaying(String name){
-        Iterator<Sound> iterator = loadedSounds.iterator();
-        while (iterator.hasNext()) {
-            Sound currentSound = iterator.next();
-            if (currentSound.getName().equals(name)){
-                return currentSound.isPlaying();
-            }
-        }
+        for (Sound currentSound : loadedSounds)
+            if (currentSound.getName().equals(name)) return currentSound.isPlaying();
         return false;
     }
 
@@ -199,9 +193,9 @@ public class SoundController {
     public void setVolume(String soundName, double volume){
         Sound toChange = getSound(soundName);
         try{
-            toChange.setVolume(volume);
+            if(toChange!=null) toChange.setVolume(volume);
         } catch (Exception e){
-            if( Config.DEBUG) System.out.println("Lautstärke konnte nicht angepasst werden. Bitte Anforderung etwas verzögern (ein paar Sekunden).");
+            if( Config.INFO_MESSAGES) System.out.println("HINWEIS: Lautstärke konnte nicht angepasst werden. Bitte Anforderung etwas verzögern (ein paar Sekunden).");
         }
     }
 
@@ -211,13 +205,7 @@ public class SoundController {
      * @return das Sound-Objekt, falls vorhanden
      */
     private Sound getSound(String soundName){
-        Iterator<Sound> iterator = loadedSounds.iterator();
-        while (iterator.hasNext()) {
-            Sound currentSound = iterator.next();
-            if (currentSound.getName().equals(soundName)){
-                return currentSound;
-            }
-        }
+        for (Sound currentSound : loadedSounds) if (currentSound.getName().equals(soundName)) return currentSound;
         return null;
     }
 

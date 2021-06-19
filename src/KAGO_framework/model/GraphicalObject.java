@@ -17,7 +17,8 @@ public class GraphicalObject implements Drawable {
 
     // Attribute: um Konstruktoraufrufzwang zu vermeiden wurden hier AUSNAHMSWEISE Startwerte gesetzt
     protected double x = 0, y = 0; // Die Koordinaten des Objekts
-    protected double width = 1, height = 1; // Die rechteckige Ausdehnung des Objekts, wobei x/y die obere, linke Ecke angeben
+    protected double width = 0, height = 0; // Die rechteckige Ausdehnung des Objekts, wobei x/y die obere, linke Ecke angeben
+    protected double radius = 0; //Falls ein Radius gesetzt wurde (also größer als 0 ist), wird collidesWith angepasst.
 
     // Referenzen
     private BufferedImage myImage;
@@ -115,7 +116,20 @@ public class GraphicalObject implements Drawable {
      * @return True, falls eine Kollision besteht, sonst false.
      */
     public boolean collidesWith(GraphicalObject gO){
-        if ( x < gO.getX()+gO.getWidth() && x + width > gO.getX() && y < gO.getY() + gO.getHeight() && y + height > gO.getY() ) return true;
+        if(radius == 0){
+            if(gO.getRadius() == 0){
+                if ( x < gO.getX()+gO.getWidth() && x + width > gO.getX() && y < gO.getY() + gO.getHeight() && y + height > gO.getY() ) return true;
+            }else{
+                if ( x < gO.getX()+2*gO.getRadius() && x + width > gO.getX() && y < gO.getY() + 2*gO.getRadius() && y + height > gO.getY() ) return true;
+            }
+        }else{
+            if(gO.getRadius() == 0){
+                if ( gO.getX() < x+2*radius && gO.getX() + gO.getWidth() > x && gO.getY() < y + 2*radius && gO.getY() + gO.getHeight() > y ) return true;
+            }else{
+                if(getDistanceTo(gO)<=radius+gO.getRadius()) return true;
+            }
+        }
+
         return false;
     }
 
@@ -127,7 +141,14 @@ public class GraphicalObject implements Drawable {
      * @return true, falls der Punkt im Objekt liegt, sonst false
      */
     public boolean collidesWith(double pX, double pY){
-        if ( pX < getX() + getWidth() && pX > getX() && pY < getY() + getHeight() && pY > getY() ) return true;
+        if(radius == 0){
+            if ( pX < getX() + getWidth() && pX > getX() && pY < getY() + getHeight() && pY > getY() ) return true;
+        }else{
+            double midX = x + radius;
+            double midY = y + radius;
+            if(Math.sqrt( Math.pow(midX-pX, 2) + Math.pow(midY-pY,2)) < radius) return true;
+        }
+
         return false;
     }
 
@@ -138,10 +159,24 @@ public class GraphicalObject implements Drawable {
      */
     public double getDistanceTo(GraphicalObject gO){
         // Berechne die Mittelpunkte der Objekte
-        double midX = x + width/2;
-        double midY = y + height/2;
-        double midX2 = gO.getX() + gO.getWidth()/2;
-        double midY2 = gO.getY() + gO.getHeight()/2;
+        double midX, midY;
+        if(radius == 0){
+            midX = x + width/2;
+            midY = y + height/2;
+        }else{
+            midX = x + radius;
+            midY = y+ radius;
+        }
+
+        double midX2, midY2;
+        if(gO.getRadius() == 0){
+            midX2 = gO.getX() + gO.getWidth()/2;
+            midY2 = gO.getY() + gO.getHeight()/2;
+        }else{
+            midX2 = gO.getX() + gO.getRadius();
+            midY2 = gO.getY() + gO.getRadius();
+        }
+
         // Berechne die Distanz zwischen den Punkten mit dem Satz des Pythagoras
         return Math.sqrt( Math.pow(midX-midX2, 2) + Math.pow(midY-midY2,2));
     }
@@ -163,6 +198,10 @@ public class GraphicalObject implements Drawable {
 
     public double getHeight() {
         return height;
+    }
+
+    public double getRadius(){
+        return radius;
     }
 
     public BufferedImage getMyImage() {
@@ -187,5 +226,8 @@ public class GraphicalObject implements Drawable {
         this.height = height;
     }
 
+    public void setRadius(double radius){
+        this.radius = radius;
+    }
 
 }
