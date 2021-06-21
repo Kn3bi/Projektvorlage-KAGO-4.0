@@ -167,11 +167,7 @@ public class DrawTool {
      * @param y3 Die y-Koordinate der dritten Ecke
      */
     public void drawTriangle(double x1, double y1, double x2, double y2, double x3, double y3 ){
-        Polygon p = new Polygon();
-        p.addPoint((int)x1,(int)y1);
-        p.addPoint((int)x2,(int)y2);
-        p.addPoint((int)x3,(int)y3);
-        if (graphics2D!= null) graphics2D.draw(p);
+        drawPolygon(x1,y1,x2,y2,x3,y3);
     }
 
     /**
@@ -184,11 +180,44 @@ public class DrawTool {
      * @param y3 Die y-Koordinate der dritten Ecke
      */
     public void drawFilledTriangle(double x1, double y1, double x2, double y2, double x3, double y3 ){
+        drawFilledPolygon(x1,y1,x2,y2,x3,y3);
+    }
+
+    /**
+     * Zeichnet ein Polygon mit beliebig vielen Eckpunkten (Mehr als 3).
+     * @param eckpunkte eine gerade anzahl an Ecken des Polygons. Diese folgen dem Schema: [[x1], [y1], [x2], [y2], [x1]] etc.
+     * @author Nils Derenthal
+     */
+    public void drawPolygon (double ... eckpunkte) {
+        graphics2D.draw(getPolygon(eckpunkte));
+    }
+
+    /**
+     * Zeichnet ein gefülltes Polygon mit beliebig vielen Eckpunkten (Mehr als 3).
+     * @param eckpunkte eine gerade anzahl an Ecken des Polygons. Diese folgen dem Schema: [[x1], [y1], [x2], [y2], [x1]] etc.
+     * @author Nils Derenthal
+     */
+    public void drawFilledPolygon (double ... eckpunkte) {
+        graphics2D.fill(getPolygon(eckpunkte));
+    }
+
+    /**
+     * Helper funktion für doppelten Code-block um ein Polygon aus einem Array von Ecken zu erzeugen.
+     * @param eckPunkte eine gerade anzahl an Ecken des Polygons. Diese folgen dem Schema: [[x1], [y1], [x2], [y2], [x1]] etc.
+     * @return das durch die Eckpunkte geschaffene Polygon
+     * @author Nils Derenthal
+     */
+    private Polygon getPolygon(double[] eckPunkte) {
+        //garantiert das eine gerade anzahl an ecken vorhanden ist und das es mehr als 3 ecken sind
+        assert eckPunkte.length % 2 == 0 && eckPunkte.length >= 3 * 2;
+        assert graphics2D != null;
+
         Polygon p = new Polygon();
-        p.addPoint((int)x1,(int)y1);
-        p.addPoint((int)x2,(int)y2);
-        p.addPoint((int)x3,(int)y3);
-        if (graphics2D!= null) graphics2D.fill(p);
+
+        for (int i = 0; i < eckPunkte.length - 1; i += 2) {
+            p.addPoint ((int)eckPunkte[i], (int) eckPunkte[i + 1]);
+        }
+        return p;
     }
 
     /**
